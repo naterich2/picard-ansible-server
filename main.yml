@@ -1,0 +1,8 @@
+---
+- hosts: all
+  tasks:
+    - import_tasks: tasks/plex.yml
+    - import_tasks: tasks/stats.yml
+    - import_tasks: tasks/transmission.yml
+    - import_tasks: tasks/gitlab.yml
+

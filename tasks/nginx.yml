@@ -1,0 +1,33 @@
+---
+- name: Create Plex Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ plex_config }}"
+
+- name: Nginx Docker Container
+  docker_container:
+    name: nginx
+    image: nginx
+    pull: true
+    volumes:
+      - "{{ nginx }}:/etc/nginx/:rw"
+      - "{{ certbot }}/conf:/etc/letsencrypt"
+      - "{{ certbot }}/www:/var/www/cerbot"
+    ports:
+      - "80:80"
+      - "443:443"
+    env:
+      TZ: "{{ timezone }}"
+      PUID: "0"
+      PGID: "0"
+    restart_policy: unless-stopped
+    memory: 1g
+    cpu_period: 100000
+    cpu_quota: 25000
+#    labels:
+#      traefik.backend: "plex"
+#      traefik.frontend.rule: "Host:plex.home-1"
+#      traefik.enable: "false"
+#      traefik.port: "32400"

@@ -1,0 +1,26 @@
+---
+- name: Create gitlab directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items: 
+    - "{{ gitlab }}/config"
+    - "{{ gitlab }}/logs"
+    - "{{ gitlab_data }}"
+  become: yes
+- name: Gitlab Docker Container
+  docker_container:
+    name: gitlab
+    image: gitlab/gitlab-ce:latest
+    pull: true
+    hostname: git.nrichman.dev
+    volumes:
+      - "{{ gitlab }}/config:/etc/gitlab:rw"
+      - "{{ gitlab }}/logs:/var/log/gitlab:rw"
+      - "{{ gitlab_data }}:/var/opt/gitlab:rw"
+    ports:
+      - "28000:80"
+    restart_policy: unless-stopped
+    memory: 1g
+    cpu_period: 100000
+    cpu_quota: 50000

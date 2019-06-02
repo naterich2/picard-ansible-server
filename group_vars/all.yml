@@ -1,0 +1,32 @@
+#             _                             
+# _ __   __ _| |_ ___       _ __   __ _ ___ 
+#| '_ \ / _` | __/ _ \_____| '_ \ / _` / __|
+#| | | | (_| | ||  __/_____| | | | (_| \__ \
+#|_| |_|\__,_|\__\___|     |_| |_|\__,_|___/
+
+#General                                           
+docker: /docker
+timezone: America/Chicago
+
+# Transmission config
+transmission: /media/Transmission
+transmission_local_network: "192.168.0.1/24"
+
+#Plex config
+plex_config: /docker/plex
+plex_library: /media/Library
+
+#InfluxDB and Telegraf
+influxdb: /docker/influxdb
+telegraf: /docker/telegraf
+grafana: /docker/grafana
+stat_collection_interval: 20s 
+
+#Gitlab
+gitlab: /docker/gitlab
+gitlab_data: /media/gitlab
+
+#OpenVPN
+ovpn_conf: /etc/openvpn/ovpn_tcp
+vpn_provider: NORDVPN
+vpn_config: /openvpn/us3341.nordvpn.com.tcp.ovpn
