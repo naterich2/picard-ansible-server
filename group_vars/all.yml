@@ -11,6 +11,7 @@ timezone: America/Chicago
 # Transmission config
 transmission: /media/Transmission
 transmission_local_network: "192.168.0.1/24"
+resolv: /docker/transmission-resolv.conf
 
 #Plex config
 plex_config: /docker/plex
@@ -25,6 +26,7 @@ stat_collection_interval: 20s
 #Gitlab
 gitlab: /docker/gitlab
 gitlab_data: /media/gitlab
+gitea: /media/gitea
 
 #OpenVPN
 ovpn_conf: /etc/openvpn/ovpn_tcp

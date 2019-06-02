@@ -1,0 +1,20 @@
+---
+- name: Create gitea directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ gitea }}"
+  become: yes
+- name: Gitea docker image
+  docker_container:
+    name: gitea
+    image: gitea/gitea
+    pull: true
+    hostname: git.nrichman.dev
+    volumes:
+      - "{{ gitea }}:/data:rw"
+    ports:
+      - "28000:3000"
+    restart_policy: unless-stopped
+    memory: 1g
