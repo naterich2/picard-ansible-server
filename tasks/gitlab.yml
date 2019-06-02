@@ -21,6 +21,6 @@
     ports:
       - "28000:80"
     restart_policy: unless-stopped
-    memory: 1g
+    memory: 1.5g
     cpu_period: 100000
-    cpu_quota: 50000
+    cpu_quota: 60000
