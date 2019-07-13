@@ -20,9 +20,14 @@
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
       - "/etc/timezone:/etc/timezone:ro"
-      - "{{ transmission }}/config:/storage/downloads:rw"
-      - "{{ transmission }}/Downloads:/config:rw"
-      - "{{ resolv }}:/etc/resolv.conf:ro"
+      - "{{ transmission }}/config:/config:rw"
+      - "{{ transmission }}/Downloads:/storage/downloads:rw"
+        #   - "{{ resolv }}:/etc/resolv.conf:ro"
+    dns_servers:
+      - "104.223.91.210"
+      - "104.223.91.194"
+      - "91.121.113.58" 
+      - "91.121.113.7"
     ports:
       - "9091:9091"
       - "51413:51413"
