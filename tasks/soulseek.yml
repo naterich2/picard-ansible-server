@@ -1,0 +1,30 @@
+---
+- name: Create Transmission Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    # mode: 0755
+  with_items:
+    - "{{ soulseek }}/appdata"
+    - "{{ soulseek }}/logs"
+    - "{{ soulseek_downloads }}"
+  become: yes
+
+- name: Soulseek noVNC
+  docker_container:
+    name: soulseek
+    image: realies/soulseek
+    pull: true
+    volumes:
+      - "{{ soulseek }}/appdata:/root/.SoulseekQT"
+      - "{{ soulseek }}/logs:/root/Soulseek Chat Logs"
+      - "{{ soulseek_downloads }}:/root/Soulseek Downloads"
+      - "{{ plex_library }}:/root/Library:ro"
+        #- "{{ transmission }}/Downloads:/storage/downloads:rw"
+        #   - "{{ resolv }}:/etc/resolv.conf:ro"
+    ports:
+      - "6080:6080"
+    env:
+      resolution: "1920x1080"
+    restart_policy: unless-stopped
+    memory: 1g

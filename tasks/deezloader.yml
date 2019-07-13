@@ -1,0 +1,22 @@
+---
+- name: Create deezloader dirs
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ deezloader_config }}"
+    - "{{ deezloader_downloads }}"
+  become: yes
+
+- name: Deezloader docker
+  docker_container:
+    name: deezloader
+    image: bocki/deezloaderrmx 
+    pull: true
+    volumes:
+      - "{{ deezloader_config }}:/config"
+      - "{{ deezloader_downloads }}:/downloads"
+    ports:
+      - "1730:1730"
+    memory: 1g
+ 
