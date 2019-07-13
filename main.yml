@@ -3,6 +3,22 @@
   tasks:
     - import_tasks: tasks/plex.yml
     - import_tasks: tasks/stats.yml
-    - import_tasks: tasks/transmission.yml
+    - import_tasks: tasks/download-hub.yml
     - import_tasks: tasks/gitea.yml
+          #- import_tasks: tasks/deezloader.yml
+#https://stackoverflow.com/questions/41721353/get-ip-address-of-docker-with-ansible
+    - name: influxdb hostname
+      shell: "docker inspect --format '{''{ .NetworkSettings.IPAddress }''}' influxdb"
+      register: influx_ip
+    - name: print ip
+      debug:
+        msg: "ip: {{influx_ip.stdout}}"
+    - name: Add influxdb tp host file
+      lineinfile:
+        path: /etc/hosts
+        line: "{{influx_ip.stdout}}\tinfluxdb.nrichman.dev\tinfluxdb"
+        insertafter: EOF
+      become: yes
+
+
 
