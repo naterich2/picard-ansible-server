@@ -35,3 +35,6 @@ soulseek_downloads: /media/Soulseek
 #Deezloader
 deezloader_config: /docker/deezloader
 deezloader_downloads: /media/Deezloader
+
+#Organizr
+organizr: /docker/Organizr

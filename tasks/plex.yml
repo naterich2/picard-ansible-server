@@ -6,29 +6,3 @@
   with_items:
     - "{{ plex_config }}"
 
-- name: plex Docker Container
-  docker_container:
-    name: plex
-    image: linuxserver/plex
-    pull: true
-    volumes:
-      - "{{ plex_config }}:/config:rw"
-      - "{{ plex_library }}/Movies:/movies:rw"
-      - "{{ plex_library }}/TV\ Shows:/tv:rw"
-      - "{{ plex_library }}/Music:/music:ro"
-    ports:
-      - "32400:32400"
-    network_mode: "host"
-    env:
-      TZ: "{{ timezone }}"
-      PUID: "0"
-      PGID: "0"
-    restart_policy: unless-stopped
-    memory: 1g
-    cpu_period: 100000
-    cpu_quota: 70000
-#    labels:
-#      traefik.backend: "plex"
-#      traefik.frontend.rule: "Host:plex.home-1"
-#      traefik.enable: "false"
-#      traefik.port: "32400"

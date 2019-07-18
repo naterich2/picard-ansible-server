@@ -1,24 +1,179 @@
 ---
 - hosts: all
   tasks:
+    - name: Include VPN credentials
+      include_vars: group_vars/credentials.yml
+
+######################################################################################
+#                                 Create Folders                                     #
+######################################################################################
     - import_tasks: tasks/plex.yml
     - import_tasks: tasks/stats.yml
     - import_tasks: tasks/download-hub.yml
     - import_tasks: tasks/gitea.yml
-          #- import_tasks: tasks/deezloader.yml
-#https://stackoverflow.com/questions/41721353/get-ip-address-of-docker-with-ansible
-    - name: influxdb hostname
-      shell: "docker inspect --format '{''{ .NetworkSettings.IPAddress }''}' influxdb"
-      register: influx_ip
-    - name: print ip
-      debug:
-        msg: "ip: {{influx_ip.stdout}}"
-    - name: Add influxdb tp host file
-      lineinfile:
-        path: /etc/hosts
-        line: "{{influx_ip.stdout}}\tinfluxdb.nrichman.dev\tinfluxdb"
-        insertafter: EOF
-      become: yes
+    - import_tasks: tasks/organizr.yml
 
-
+######################################################################################
+#                                 Docker Containers                                  #
+######################################################################################
+#
+#
+#
+#
+#######################################################
+###################### Plex ###########################
+#######################################################
+    - name: plex Docker Container
+      docker_container:
+        name: plex
+        image: linuxserver/plex
+        pull: true
+        volumes:
+          - "{{ plex_config }}:/config:rw"
+          - "{{ plex_library }}/Movies:/movies:rw"
+          - "{{ plex_library }}/TV\ Shows:/tv:rw"
+          - "{{ plex_library }}/Music:/music:ro"
+        network_mode: "host"
+        env:
+          TZ: "{{ timezone }}"
+          PUID: "0"
+          PGID: "0"
+        restart_policy: unless-stopped
+        memory: 1g
+        cpu_period: 100000
+        cpu_quota: 70000
+#######################################################
+##################### Influxdb ########################
+#######################################################
+    - name: InfluxDB
+      docker_container:
+        name: influxdb
+        image: influxdb
+        pull: true
+        volumes:
+          - "{{ influxdb }}:/var/lib/influxdb:rw"
+        ports:
+          - "8086:8086"
+        restart_policy: unless-stopped
+        env:
+          INFLUXDB_LOGGING_LEVEL: "error"
+        memory: 1g
+        cpu_period: 100000
+        cpu_quota: 25000
+#######################################################
+##################### Telegraf ########################
+#######################################################
+    - name: Telegraf docker
+      docker_container:
+        name: telegraf
+        image: telegraf
+        pull: true
+        volumes:
+          - "{{ telegraf }}/telegraf.conf:/etc/telegraf/telegraf.conf:ro"
+          - "/var/run/docker.sock:/var/run/docker.sock:ro"
+        restart_policy: unless-stopped
+        memory: 1g
+        cpu_period: 100000
+        cpu_quota: 25000
+#######################################################
+##################### Grafana #########################
+#######################################################
+    - name: Grafana docker
+      docker_container:
+        name: grafana
+        image: grafana/grafana
+        pull: true
+        volumes:
+          - "{{ grafana }}/data:/var/lib/grafana:rw"
+          - "{{ grafana }}/config/provisioning:/etc/grafana/provisioning:ro"
+        ports:
+          - "3000:3000"
+        env:
+          GF_SERVER_ROOT_URL: "http://dashboard.nrichman.dev"
+          GF_SECURITY_ADMIN_PASSWORD: "test"
+        restart_policy: unless-stopped
+        memory: 1g
+        cpu_period: 100000
+        cpu_quota: 25000
+#######################################################
+################### download_hub ######################
+#######################################################
+    - name: download_hub with VPN
+      docker_container:
+        name: download_hub
+        image: nrichman/download-hub
+        volumes:
+          - "/etc/localtime:/etc/localtime:ro"
+          - "/etc/timezone:/etc/timezone:ro"
+          - "{{ download_hub }}/transmission_config:/config:rw"
+          - "{{ download_hub }}/Downloads/transmission:/storage/downloads:rw"
+          - "{{ download_hub }}/soulseek_appdata:/root/.SoulseekQt"
+          - "{{ download_hub }}/soulseek_logs:/root/Soulseek Chat Logs"
+          - "{{ download_hub }}/Downloads/soulseek:/root/Soulseek Downloads"
+          - "{{ download_hub }}/Downloads/deezloader:/downloads"
+          - "{{ download_hub }}/deezloader_config:/root/.config/Deezloader Remix/config"
+          - "{{ plex_library }}:/root/Library:ro"
+        ports:
+          - "9091:9091"
+          - "6080:6080"
+          - "1730:1730"
+        env:
+          TRANSMISSION_HOME: /config
+          TRANSMISSION_DOWNLOAD_DIR: /storage/downloads/complete
+          TRANSMISSION_INCOMPLETE_DIR: /storage/downloads/incomplete
+          TRANSMISSION_WATCH_DIR: /storage/watch
+          OPENVPN_PROVIDER: "{{ vpn_provider }}"
+          OPENVPN_USERNAME: "{{ vpn_username }}"
+          OPENVPN_PASSWORD: "{{ vpn_password }}"
+          OPENVPN_CONFIG: "{{ vpn_config }}"
+          OPENVPN_OPTS: "--redirect-gateway def1"
+          PUID: "0"
+          PGID: "0"
+          LOCAL_NETWORK: "{{ transmission_local_network }}"
+          ENABLE_UFW: "false"
+          CREATE_TUN_DEVICE: "true"
+          TRANSMISSION_RPC_USERNAME: "{{ transmission_username }}"
+          TRANSMISSION_RPC_PASSWORD: "{{ transmission_password }}"
+        capabilities:
+          - NET_ADMIN
+        restart_policy: unless-stopped
+        memory: 1g
+        cpu_period: 100000
+        cpu_quota: 50000
+#######################################################
+####################### Gitea #########################
+#######################################################
+    - name: Gitea docker image
+      docker_container:
+        name: gitea
+        image: gitea/gitea
+        pull: true
+        hostname: git.nrichman.dev
+        volumes:
+          - "{{ gitea }}:/data:rw"
+        ports:
+          - "28000:3000"
+        restart_policy: unless-stopped
+        memory: 1g
+#######################################################
+###################### Organizr #######################
+#######################################################
+    - name: Organizr docker
+      docker_container:
+        name: organizr
+        image: organizrtools/organizr-v2
+        pull: true
+        hostname: home.nrichman.dev
+        volumes:
+          - "{{ organizr }}/config:/config"
+        env:
+          PGID: "1000"
+          PUID: "1000"
+          TZ: "America/Chicago"
+        ports:
+          - "28001:80"
+        restart_policy: unless-stopped
+        memory: 1g 
+        cpu_period: 100000
+        cpu_quota: 25000
 

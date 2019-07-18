@@ -1,7 +1,4 @@
 ---
-- name: Include VPN credentials
-  include_vars: group_vars/credentials.yml
-
 - name: Create Download-Hub Directories
   file:
     path: "{{ item }}"
@@ -17,46 +14,3 @@
     - "{{ download_hub }}/Downloads/deezloader"
   become: yes
 
-- name: download_hub with VPN
-  docker_container:
-    name: download_hub
-    image: nrichman/download-hub
-    volumes:
-      - "/etc/localtime:/etc/localtime:ro"
-      - "/etc/timezone:/etc/timezone:ro"
-      - "{{ download_hub }}/transmission_config:/config:rw"
-      - "{{ download_hub }}/Downloads/transmission:/storage/downloads:rw"
-      - "{{ download_hub }}/soulseek_appdata:/root/.SoulseekQt"
-      - "{{ download_hub }}/soulseek_logs:/root/Soulseek Chat Logs"
-      - "{{ download_hub }}/Downloads/soulseek:/root/Soulseek Downloads"
-      - "{{ download_hub }}/Downloads/deezloader:/downloads"
-      - "{{ download_hub }}/deezloader_config:/root/.config/Deezloader Remix/config"
-      - "{{ plex_library }}:/root/Library:ro"
-        #   - "{{ resolv }}:/etc/resolv.conf:ro"
-    ports:
-      - "9091:9091"
-      - "6080:6080"
-      - "1730:1730"
-    env:
-      TRANSMISSION_HOME: /config
-      TRANSMISSION_DOWNLOAD_DIR: /storage/downloads/complete
-      TRANSMISSION_INCOMPLETE_DIR: /storage/downloads/incomplete
-      TRANSMISSION_WATCH_DIR: /storage/watch
-      OPENVPN_PROVIDER: "{{ vpn_provider }}"
-      OPENVPN_USERNAME: "{{ vpn_username }}"
-      OPENVPN_PASSWORD: "{{ vpn_password }}"
-      OPENVPN_CONFIG: "{{ vpn_config }}"
-      OPENVPN_OPTS: "--redirect-gateway def1"
-      PUID: "0"
-      PGID: "0"
-      LOCAL_NETWORK: "{{ transmission_local_network }}"
-      ENABLE_UFW: "false"
-      CREATE_TUN_DEVICE: "true"
-      TRANSMISSION_RPC_USERNAME: "{{ transmission_username }}"
-      TRANSMISSION_RPC_PASSWORD: "{{ transmission_password }}"
-    capabilities:
-      - NET_ADMIN
-    restart_policy: unless-stopped
-    memory: 1g
-    cpu_period: 100000
-    cpu_quota: 50000
