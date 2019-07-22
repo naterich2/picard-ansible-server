@@ -4,7 +4,8 @@
     path: "{{ item }}"
     state: directory
   with_items:
-    - "{{ influxdb }}"
+    - "{{ influxdb }}/etc"
+    - "{{ influxdb }}/var"
     - "{{ telegraf }}"
 
 - name: Create Grafana Directories
