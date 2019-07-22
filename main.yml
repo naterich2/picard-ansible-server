@@ -51,12 +51,15 @@
         image: influxdb
         pull: true
         volumes:
-          - "{{ influxdb }}:/var/lib/influxdb:rw"
+          - "{{ influxdb }}/var:/var/lib/influxdb:rw"
+          - "{{ influxdb }}/etc:/etc/influxdb:rw"
         ports:
           - "8086:8086"
+          - "8083:8083"
         restart_policy: unless-stopped
         env:
           INFLUXDB_LOGGING_LEVEL: "error"
+          INFLUXDB_ADMIN_ENABLED: "true"
         memory: 1g
         cpu_period: 100000
         cpu_quota: 25000
@@ -71,6 +74,8 @@
         volumes:
           - "{{ telegraf }}/telegraf.conf:/etc/telegraf/telegraf.conf:ro"
           - "/var/run/docker.sock:/var/run/docker.sock:ro"
+        ports:
+          - "161:161"
         restart_policy: unless-stopped
         memory: 1g
         cpu_period: 100000
@@ -176,4 +181,25 @@
         memory: 1g 
         cpu_period: 100000
         cpu_quota: 25000
-
+#######################################################
+###################### MariaDB ########################
+#######################################################
+    - name: Mariadb docker
+      docker_container:
+        name: mariadb
+        image: yobasystems/alpine-mariadb
+        pull: true
+        volumes:
+          - "{{ mariadb }}:/var/lib/mysql"
+        env:
+          MYSQL_DATABASE: "blog"
+          MYSQL_USER: "mysql"
+          MYSQL_PASSWORD: "{{ mariadb_password }}"
+          MYSQL_ROOT_PASSWORD: "{{ mariadb_password }}"
+        ports:
+          - "3306:3306"
+        restart_policy: unless-stopped
+        memory: 1g 
+        cpu_period: 100000
+        cpu_quota: 15000
+    

@@ -38,3 +38,6 @@ deezloader_downloads: /media/Deezloader
 
 #Organizr
 organizr: /docker/Organizr
+
+#Mariadb
+mariadb: /var/lib/mysql

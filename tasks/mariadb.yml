@@ -1,0 +1,9 @@
+---
+- name: Create mariadb directories 
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ mariadb }}"
+    - "{{ mariadb }}/mysql-bin"
+
