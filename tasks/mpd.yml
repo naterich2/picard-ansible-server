@@ -1,0 +1,32 @@
+---
+- name: Create InfluxDB and Telegraf Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ mpd }}"
+    - "{{ mpd }}"
+
+- name: Create Grafana Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "472"
+    recurse: yes
+  with_items:
+    - "{{ grafana }}"
+    - "{{ grafana }}/data"
+    - "{{ grafana }}/config/"
+    - "{{ grafana }}/config/provisioning"
+    - "{{ grafana }}/config/provisioning/datasources"
+  become: yes
+
+- name: Template telegraf.conf
+  template:
+    src: templates/telegraf.conf
+    dest: "{{ telegraf }}/telegraf.conf"
+
+- name: Template Grafana data source
+  template:
+    src: templates/grafana.yml
+    dest: "{{ grafana }}/config/provisioning/datasources/{{ hostvars['localhost']['ansible_hostname'] }}.yml"
