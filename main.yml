@@ -1,5 +1,6 @@
 ---
-- hosts: all
+- hosts: server
+  connection: local
   tasks:
     - name: Include VPN credentials
       include_vars: group_vars/credentials.yml
@@ -33,6 +34,7 @@
           - "{{ plex_library }}/Movies:/movies:rw"
           - "{{ plex_library }}/TV\ Shows:/tv:rw"
           - "{{ plex_library }}/Music:/music:ro"
+          - "{{ plex_library }}/Other:/other:ro"
         network_mode: "host"
         env:
           TZ: "{{ timezone }}"
