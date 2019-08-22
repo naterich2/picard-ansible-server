@@ -1,0 +1,10 @@
+---
+- name: Create NextCloud Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ nextcloud }}/data"
+    - "{{ nextcloud }}/html"
+    - "{{ nextcloud }}/config"
+  become: yes
