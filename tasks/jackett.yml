@@ -1,9 +1,0 @@
----
-- name: Create Jackett Directories
-  file:
-    path: "{{ item }}"
-    state: directory
-  with_items:
-    - "{{ jackett }}"
-    - "{{ jackett_torrent_blackhole }}"
-  become: yes

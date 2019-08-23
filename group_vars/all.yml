@@ -41,3 +41,12 @@ organizr: /docker/Organizr
 
 #Mariadb
 mariadb: /var/lib/mysql
+
+#Nextcloud
+nextcloud: /media/nextcloud
+nextcloud_admin: admin
+
+#Jackett, Radarr, Sonarr, Lidarr
+jackett: /docker/Jackett
+jackett_torrent_blackhole: /media/download_hub/Downloads/jackett
+

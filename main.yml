@@ -3,16 +3,40 @@
   connection: local
   tasks:
     - name: Include VPN credentials
-      include_vars: group_vars/credentials.yml
+      include_vars:
+        file: group_vars/credentials.yml
 
 ######################################################################################
 #                                 Create Folders                                     #
 ######################################################################################
-    - import_tasks: tasks/plex.yml
-    - import_tasks: tasks/stats.yml
-    - import_tasks: tasks/download-hub.yml
-    - import_tasks: tasks/gitea.yml
-    - import_tasks: tasks/organizr.yml
+    - name: plex tasks
+      import_tasks: tasks/plex.yml
+      tags: plex
+
+    - name: stats tasks
+      import_tasks: tasks/stats.yml
+      tags: stats
+
+    - name: download_hub tasks
+      import_tasks: tasks/download-hub.yml
+      tags: download_hub
+
+    - name: gitea tasks
+      import_tasks: tasks/gitea.yml
+      tags: gitea
+
+    - name: nextcloud tasks
+      import_tasks: tasks/nextcloud.yml
+      tags: nextcloud
+
+    - name: sonarr/radarr/lidarr/jackett tasks
+      import_tasks: tasks/rrs.yml
+      tags: 
+       - lidarr
+       - sonarr
+       - radarr
+       - jackett
+       - rrs
 
 ######################################################################################
 #                                 Docker Containers                                  #
@@ -43,7 +67,7 @@
         restart_policy: unless-stopped
         memory: 1g
         cpu_period: 100000
-        cpu_quota: 70000
+        cpu_quota: 100000
 #######################################################
 ##################### Influxdb ########################
 #######################################################
@@ -96,7 +120,7 @@
         ports:
           - "3000:3000"
         env:
-          GF_SERVER_ROOT_URL: "http://dashboard.nrichman.dev"
+          GF_SERVER_ROOT_URL: "http://192.168.0.197"
           GF_SECURITY_ADMIN_PASSWORD: "test"
         restart_policy: unless-stopped
         memory: 1g
@@ -163,33 +187,13 @@
         restart_policy: unless-stopped
         memory: 1g
 #######################################################
-###################### Organizr #######################
-#######################################################
-    - name: Organizr docker
-      docker_container:
-        name: organizr
-        image: organizrtools/organizr-v2
-        pull: true
-        hostname: home.nrichman.dev
-        volumes:
-          - "{{ organizr }}/config:/config"
-        env:
-          PGID: "1000"
-          PUID: "1000"
-          TZ: "America/Chicago"
-        ports:
-          - "28001:80"
-        restart_policy: unless-stopped
-        memory: 1g 
-        cpu_period: 100000
-        cpu_quota: 25000
-#######################################################
 ###################### MariaDB ########################
 #######################################################
     - name: Mariadb docker
       docker_container:
         name: mariadb
         image: yobasystems/alpine-mariadb
+        hostname: mariadb
         pull: true
         volumes:
           - "{{ mariadb }}:/var/lib/mysql"
@@ -204,4 +208,126 @@
         memory: 1g 
         cpu_period: 100000
         cpu_quota: 15000
+#######################################################
+##################### Nextcloud #######################
+#######################################################
+    - name: Nextcloud Docker 
+      docker_container:
+        name: nextcloud
+        image: nextcloud:latest
+        pull: true
+        volumes:
+          - "{{ nextcloud }}/html:/var/www/html"
+          - "{{ nextcloud }}/config:/var/www/html/config"
+          - "{{ nextcloud }}/html:/var/www/html/data"
+        env:
+          MYSQL_DATABASE: "nextcloud"
+          MYSQL_USER: "mysql"
+          MYSQL_PASSWORD: "{{ mariadb_password }}"
+          MYSQL_HOST: "172.17.0.2:3306"
+          NEXTCLOUD_ADMIN_USER: "{{ nextcloud_admin }}"
+          NEXTCLOUD_ADMIN_PASSWORD: "{{ nextcloud_admin_password }}"
+          #NEXTCLOUD_TRUSTED_DOMAINS: "nrichman.dev www.nrichman.dev"
+        ports:
+          - "3005:80"
+        restart_policy: unless-stopped
+        memory: 1g 
+        cpu_period: 100000
+        cpu_quota: 50000
+#######################################################
+####################### Lidarr ########################
+#######################################################
+    - name: Lidarr
+      tags:
+        - lidarr
+        - rrs
+      docker_container:
+        name: lidarr
+        image: linuxserver/lidarr
+        pull: true
+        volumes:
+          - "{{ download_hub }}/lidarr:/config"
+          - "{{ download_hub }}/Downloads/transmission/complete:/downloads"
+          - "{{ plex_library }}/Music:/music"
+        env:
+          PUID: "1000"
+          PGID: "1000"
+          TZ: "America/Chicago"
+        ports:
+          - "3007:8686"
+        restart_policy: unless-stopped
+        memory: 1g 
+        cpu_period: 100000
+        cpu_quota: 55000
+#######################################################
+####################### Radarr ########################
+#######################################################
+    - name: radarr container
+      tags:
+        - radarr
+        - rrs
+      docker_container:
+        name: radarr
+        image: linuxserver/radarr:latest
+        state: started
+        restart_policy: unless-stopped
+        ports:
+          - "3009:7878"
+        env:
+          TZ: "America/Chicago"
+          PGID: "1000"
+          PUID: "1000"
+        volumes:
+          - "{{ plex_library }}/Movies:/movies"
+          - "{{ download_hub }}/Downloads/transmission/complete:/downloads"
+          - "{{ download_hub }}/radarr:/config"
+        memory: 1g 
+        cpu_period: 100000
+        cpu_quota: 55000
+#######################################################
+####################### Sonarr ########################
+#######################################################
+    - name: sonarr container
+      tags:
+        - sonarr
+        - rrs
+      docker_container:
+        name: sonarr
+        image: linuxserver/sonarr
+        state: started
+        restart_policy: unless-stopped
+        ports:
+          - "3011:8989"
+        env:
+          TZ: "America/Chicago"
+          PGID: "1000"
+          PUID: "1000"
+        volumes:
+          - "{{ plex_library }}/TV\ Shows:/tv"
+          - "{{ download_hub }}/Downloads/transmission/complete:/downloads"
+          - "{{ download_hub }}/sonarr:/config"
+        memory: 1g 
+        cpu_period: 100000
+        cpu_quota: 55000
+#######################################################
+###################### Jackett ########################
+#######################################################
+    - name: Jackett Container
+      tags:
+        - jackett
+        - rrs
+      docker_container:
+        name: jackett
+        image: linuxserver/jackett
+        state: started
+        restart_policy: unless-stopped
+        ports:
+          - "9117:9117"
+        env:
+          TZ: "America/Chicago"
+          PGID: "1000"
+          PUID: "1000"
+        volumes:
+          - "{{ jackett }}:/config"
+          - "{{ jackett_torrent_blackhole }}:/downloads"
     
