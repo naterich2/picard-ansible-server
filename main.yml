@@ -3,6 +3,8 @@
   connection: local
   tasks:
     - name: Include VPN credentials
+      tags:
+        - download_hub
       include_vars:
         file: group_vars/credentials.yml
 
@@ -49,6 +51,8 @@
 ###################### Plex ###########################
 #######################################################
     - name: plex Docker Container
+      tags:
+        - plex
       docker_container:
         name: plex
         image: linuxserver/plex
@@ -62,8 +66,9 @@
         network_mode: "host"
         env:
           TZ: "{{ timezone }}"
-          PUID: "0"
-          PGID: "0"
+          VERSION: "docker"
+          PUID: "1000"
+          PGID: "1000"
         restart_policy: unless-stopped
         memory: 1g
         cpu_period: 100000
@@ -130,6 +135,8 @@
 ################### download_hub ######################
 #######################################################
     - name: download_hub with VPN
+      tags:
+        - download_hub
       docker_container:
         name: download_hub
         image: nrichman/download-hub

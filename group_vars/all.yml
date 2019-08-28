@@ -26,7 +26,7 @@ gitea: /media/gitea
 #OpenVPN and Transmission
 vpn_provider: TORGUARD
 download_hub: /media/download_hub
-transmission_local_network: "192.168.0.0/24"
+transmission_local_network: "10.0.1.0/26"
 
 #Soulseek
 soulseek: /docker/Soulseek
@@ -48,5 +48,5 @@ nextcloud_admin: admin
 
 #Jackett, Radarr, Sonarr, Lidarr
 jackett: /docker/Jackett
-jackett_torrent_blackhole: /media/download_hub/Downloads/jackett
+jacket_torrent_blackhole: /media/download_hub/Downloads/jackett
 
