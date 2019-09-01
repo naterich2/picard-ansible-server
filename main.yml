@@ -39,6 +39,43 @@
        - radarr
        - jackett
        - rrs
+######################################################################################
+#                                 Docker Networks                                    #
+######################################################################################
+    - name: Docker main network
+      tags:
+        - networks
+      docker_network:
+        name: main
+        driver: bridge
+        driver_options:
+          com.docker.network.bridge.name: "docker1"
+        ipam_config:
+          - subnet: 172.16.100.0/26
+            gateway: 172.16.100.1
+    - name: Docker stats network
+      tags:
+        - networks
+      docker_network:
+        name: stats
+        driver: bridge
+        driver_options:
+          com.docker.network.bridge.name: "docker2"
+        ipam_config:
+          - subnet: 172.16.1.0/27
+            gateway: 172.16.1.1
+    - name: Docker torrent network
+      tags:
+        - networks
+      docker_network:
+        name: torrent
+        driver: bridge
+        driver_options:
+          com.docker.network.bridge.name: "docker3"
+        ipam_config:
+          - subnet: 172.16.2.0/27
+            gateway: 172.16.2.1
+      
 
 ######################################################################################
 #                                 Docker Containers                                  #
@@ -88,6 +125,12 @@
           - "8086:8086"
           - "8083:8083"
         restart_policy: unless-stopped
+        networks:
+          - name: stats
+            ipv4_address: "172.16.1.2"
+            aliases:
+              - "influxdb"
+        networks_cli_compatible: yes
         env:
           INFLUXDB_LOGGING_LEVEL: "error"
           INFLUXDB_ADMIN_ENABLED: "true"
@@ -107,6 +150,12 @@
           - "/var/run/docker.sock:/var/run/docker.sock:ro"
         ports:
           - "161:161"
+        networks:
+          - name: stats
+            ipv4_address: "172.16.1.3"
+            aliases:
+              - "telegraf"
+        networks_cli_compatible: yes
         restart_policy: unless-stopped
         memory: 1g
         cpu_period: 100000
@@ -115,6 +164,8 @@
 ##################### Grafana #########################
 #######################################################
     - name: Grafana docker
+      tags:
+        - "grafana"
       docker_container:
         name: grafana
         image: grafana/grafana
@@ -124,8 +175,14 @@
           - "{{ grafana }}/config/provisioning:/etc/grafana/provisioning:ro"
         ports:
           - "3000:3000"
+        networks:
+          - name: stats
+            ipv4_address: "172.16.1.4"
+            aliases:
+              - "grafana"
+        networks_cli_compatible: yes
         env:
-          GF_SERVER_ROOT_URL: "http://192.168.0.197"
+          GF_SERVER_ROOT_URL: "http://picard:3000"
           GF_SECURITY_ADMIN_PASSWORD: "test"
         restart_policy: unless-stopped
         memory: 1g
@@ -155,6 +212,12 @@
           - "9091:9091"
           - "6080:6080"
           - "1730:1730"
+        networks:
+          - name: torrent
+            ipv4_address: "172.16.2.2"
+            aliases:
+              - "download_hub"
+        networks_cli_compatible: yes
         env:
           TRANSMISSION_HOME: /config
           TRANSMISSION_DOWNLOAD_DIR: /storage/downloads/complete
@@ -191,6 +254,12 @@
           - "{{ gitea }}:/data:rw"
         ports:
           - "28000:3000"
+        networks:
+          - name: main
+            ipv4_address: "172.16.100.2"
+            aliases:
+              - "git"
+        networks_cli_compatible: yes
         restart_policy: unless-stopped
         memory: 1g
 #######################################################
@@ -211,6 +280,12 @@
           MYSQL_ROOT_PASSWORD: "{{ mariadb_password }}"
         ports:
           - "3306:3306"
+        networks:
+          - name: main
+            ipv4_address: "172.16.100.3"
+            aliases:
+              - "grafana"
+        networks_cli_compatible: yes
         restart_policy: unless-stopped
         memory: 1g 
         cpu_period: 100000
@@ -237,6 +312,12 @@
           #NEXTCLOUD_TRUSTED_DOMAINS: "nrichman.dev www.nrichman.dev"
         ports:
           - "3005:80"
+        networks:
+          - name: main
+            ipv4_address: "172.16.100.4"
+            aliases:
+              - "nextcloud"
+        networks_cli_compatible: yes
         restart_policy: unless-stopped
         memory: 1g 
         cpu_period: 100000
@@ -254,7 +335,7 @@
         pull: true
         volumes:
           - "{{ download_hub }}/lidarr:/config"
-          - "{{ download_hub }}/Downloads/transmission/complete:/downloads"
+          - "{{ download_hub }}/Downloads/transmission/complete:/storage/downloads/complete"
           - "{{ plex_library }}/Music:/music"
         env:
           PUID: "1000"
@@ -262,6 +343,12 @@
           TZ: "America/Chicago"
         ports:
           - "3007:8686"
+        networks:
+          - name: torrent
+            ipv4_address: "172.16.2.3"
+            aliases:
+              - "lidarr"
+        networks_cli_compatible: yes
         restart_policy: unless-stopped
         memory: 1g 
         cpu_period: 100000
@@ -280,6 +367,12 @@
         restart_policy: unless-stopped
         ports:
           - "3009:7878"
+        networks:
+          - name: torrent
+            ipv4_address: "172.16.2.4"
+            aliases:
+              - "radarr"
+        networks_cli_compatible: yes
         env:
           TZ: "America/Chicago"
           PGID: "1000"
@@ -305,6 +398,12 @@
         restart_policy: unless-stopped
         ports:
           - "3011:8989"
+        networks:
+          - name: torrent
+            ipv4_address: "172.16.2.5"
+            aliases:
+              - "sonarr"
+        networks_cli_compatible: yes
         env:
           TZ: "America/Chicago"
           PGID: "1000"
@@ -330,6 +429,12 @@
         restart_policy: unless-stopped
         ports:
           - "9117:9117"
+        networks:
+          - name: torrent
+            ipv4_address: "172.16.2.6"
+            aliases:
+              - "jackett"
+        networks_cli_compatible: yes
         env:
           TZ: "America/Chicago"
           PGID: "1000"

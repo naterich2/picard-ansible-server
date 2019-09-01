@@ -48,5 +48,5 @@ nextcloud_admin: admin
 
 #Jackett, Radarr, Sonarr, Lidarr
 jackett: /docker/Jackett
-jacket_torrent_blackhole: /media/download_hub/Downloads/jackett
+jackett_torrent_blackhole: /media/download_hub/Downloads/jackett
 
