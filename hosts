@@ -43,6 +43,7 @@
 ## db-[99:101]-node.example.com
 [server]
 localhost
+pi@janeway
 [server:vars]
 ansible_python_interpreter=/usr/bin/python3
 
