@@ -1,0 +1,95 @@
+---
+- hosts: data.nrichman.lan
+  tasks:
+######################################################################################
+#                                 Create Folders                                     #
+######################################################################################
+
+    - name: Stats directory creation
+      import_tasks: ../tasks/stats.yml
+######################################################################################
+#                                 Docker Networks                                    #
+######################################################################################
+    - name: Create small docker network for stats
+      docker_network:
+        name: stats
+        driver: bridge
+        driver_options:
+          com.docker.network.bridge.name: "docker1"
+        ipam_config:
+          - subnet: 172.16.0.0/27
+            gateway: 172.16.0.1
+
+######################################################################################
+#                                 Docker Containers                                  #
+######################################################################################
+#
+#######################################################
+##################### InfluxDB ########################
+#######################################################
+    - name: InfluxDB docker
+      docker_container:
+        name: influxdb
+        image: influxdb
+        pull: true
+        volumes:
+          - "{{ influxdb  }}/var:/var/lib/influxdb:rw"
+          - "{{ influxdb  }}/etc:/etc/influxdb:rw"
+        ports:
+          - "8086:8086"
+          - "8083:8083"
+        restart_policy: unless-stopped
+        networks_cli_compatible: yes
+        env:
+          INFLUXDB_LOGGING_LEVEL: "error"
+          INFLUXDB_ADMIN_ENABLED: "true"
+        networks: 
+          - name: stats 
+            ipv4_address: "172.16.0.2"
+            aliases:
+              - influxdb
+      become: yes
+#######################################################
+##################### Telegraf ########################
+#######################################################
+    - name: Telegraf docker
+      docker_container:
+        name: telegraf
+        image: telegraf
+        pull: true
+        volumes:
+          - "{{ telegraf }}/telegraf.conf:/etc/telegraf/telegraf.conf:ro"
+          - "/var/run/docker.sock:/var/run/docker.sock:ro"
+        ports:
+          - "161:161"
+        restart_policy: unless-stopped
+        networks_cli_compatible: yes
+        networks: 
+          - name: stats
+            ipv4_address: "172.16.0.3"
+            aliases:
+              - telegraf
+      become: yes
+#######################################################
+##################### Grafana #########################
+#######################################################
+    - name: Grafana docker
+      docker_container:
+        name: grafana
+        image: grafana/grafana
+        pull: true
+        volumes:
+          - "{{ grafana  }}/data:/var/lib/grafana:rw"
+          - "{{ grafana  }}/config/provisioning:/etc/grafana/provisioning:ro"
+        ports:
+          - "3000:3000"
+        networks_cli_compatible: yes
+        networks: 
+          - name: stats 
+            ipv4_address: "172.16.0.4"
+            aliases:
+              - grafana
+        restart_policy: unless-stopped
+      become: yes
+
+

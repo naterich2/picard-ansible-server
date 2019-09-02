@@ -42,3 +42,23 @@
         cpu_period: 100000
         cpu_quota: 25000
       become: yes
+#######################################################
+##################### Telegraf ########################
+#######################################################
+    - name: Grafana docker
+      docker_container:
+        name: grafana
+        image: grafana/grafana
+        pull: true
+        volumes:
+          - "{{ grafana  }}/data:/var/lib/grafana:rw"
+          - "{{ grafana  }}/config/provisioning:/etc/grafana/provisioning:ro"
+        ports:
+          - "161:161"
+        restart_policy: unless-stopped
+        memory: 1g
+        cpu_period: 100000
+        cpu_quota: 25000
+      become: yes
+
+
