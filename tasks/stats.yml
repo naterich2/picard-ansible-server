@@ -24,10 +24,10 @@
 
 - name: Template telegraf.conf
   template:
-    src: templates/telegraf-slave.conf
+    src: ../templates/telegraf-master.conf
     dest: "{{ telegraf }}/telegraf.conf"
 
 - name: Template Grafana data source
   template:
-    src: templates/grafana.yml
-    dest: "{{ grafana }}/config/provisioning/datasources/{{ hostvars['localhost']['ansible_hostname'] }}.yml"
+    src: ../templates/grafana.yml
+    dest: "{{ grafana }}/config/provisioning/datasources/{{ ansible_facts['hostname'] }}.yml"

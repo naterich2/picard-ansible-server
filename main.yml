@@ -15,9 +15,9 @@
       import_tasks: tasks/plex.yml
       tags: plex
 
-    - name: stats tasks
-      import_tasks: tasks/stats.yml
-      tags: stats
+#    - name: stats tasks
+#      import_tasks: tasks/stats.yml
+#      tags: stats
 
     - name: download_hub tasks
       import_tasks: tasks/download-hub.yml
@@ -53,17 +53,17 @@
         ipam_config:
           - subnet: 172.16.100.0/26
             gateway: 172.16.100.1
-    - name: Docker stats network
-      tags:
-        - networks
-      docker_network:
-        name: stats
-        driver: bridge
-        driver_options:
-          com.docker.network.bridge.name: "docker2"
-        ipam_config:
-          - subnet: 172.16.1.0/27
-            gateway: 172.16.1.1
+#    - name: Docker stats network
+#      tags:
+#        - networks
+#      docker_network:
+#        name: stats
+#        driver: bridge
+#        driver_options:
+#          com.docker.network.bridge.name: "docker2"
+#        ipam_config:
+#          - subnet: 172.16.1.0/27
+#            gateway: 172.16.1.1
     - name: Docker torrent network
       tags:
         - networks
@@ -110,84 +110,84 @@
         memory: 1g
         cpu_period: 100000
         cpu_quota: 100000
-#######################################################
-##################### Influxdb ########################
-#######################################################
-    - name: InfluxDB
-      docker_container:
-        name: influxdb
-        image: influxdb
-        pull: true
-        volumes:
-          - "{{ influxdb }}/var:/var/lib/influxdb:rw"
-          - "{{ influxdb }}/etc:/etc/influxdb:rw"
-        ports:
-          - "8086:8086"
-          - "8083:8083"
-        restart_policy: unless-stopped
-        networks:
-          - name: stats
-            ipv4_address: "172.16.1.2"
-            aliases:
-              - "influxdb"
-        networks_cli_compatible: yes
-        env:
-          INFLUXDB_LOGGING_LEVEL: "error"
-          INFLUXDB_ADMIN_ENABLED: "true"
-        memory: 1g
-        cpu_period: 100000
-        cpu_quota: 25000
-#######################################################
-##################### Telegraf ########################
-#######################################################
-    - name: Telegraf docker
-      docker_container:
-        name: telegraf
-        image: telegraf
-        pull: true
-        volumes:
-          - "{{ telegraf }}/telegraf.conf:/etc/telegraf/telegraf.conf:ro"
-          - "/var/run/docker.sock:/var/run/docker.sock:ro"
-        ports:
-          - "161:161"
-        networks:
-          - name: stats
-            ipv4_address: "172.16.1.3"
-            aliases:
-              - "telegraf"
-        networks_cli_compatible: yes
-        restart_policy: unless-stopped
-        memory: 1g
-        cpu_period: 100000
-        cpu_quota: 25000
-#######################################################
-##################### Grafana #########################
-#######################################################
-    - name: Grafana docker
-      tags:
-        - "grafana"
-      docker_container:
-        name: grafana
-        image: grafana/grafana
-        pull: true
-        volumes:
-          - "{{ grafana }}/data:/var/lib/grafana:rw"
-          - "{{ grafana }}/config/provisioning:/etc/grafana/provisioning:ro"
-        ports:
-          - "3000:3000"
-        networks:
-          - name: stats
-            ipv4_address: "172.16.1.4"
-            aliases:
-              - "grafana"
-        networks_cli_compatible: yes
-        env:
-          GF_SERVER_ROOT_URL: "http://picard:3000"
-          GF_SECURITY_ADMIN_PASSWORD: "test"
-        restart_policy: unless-stopped
-        memory: 1g
-        cpu_period: 100000
-        cpu_quota: 25000
+########################################################
+###################### Influxdb ########################
+########################################################
+#    - name: InfluxDB
+#      docker_container:
+#        name: influxdb
+#        image: influxdb
+#        pull: true
+#        volumes:
+#          - "{{ influxdb }}/var:/var/lib/influxdb:rw"
+#          - "{{ influxdb }}/etc:/etc/influxdb:rw"
+#        ports:
+#          - "8086:8086"
+#          - "8083:8083"
+#        restart_policy: unless-stopped
+#        networks:
+#          - name: stats
+#            ipv4_address: "172.16.1.2"
+#            aliases:
+#              - "influxdb"
+#        networks_cli_compatible: yes
+#        env:
+#          INFLUXDB_LOGGING_LEVEL: "error"
+#          INFLUXDB_ADMIN_ENABLED: "true"
+#        memory: 1g
+#        cpu_period: 100000
+#        cpu_quota: 25000
+########################################################
+###################### Telegraf ########################
+########################################################
+#    - name: Telegraf docker
+#      docker_container:
+#        name: telegraf
+#        image: telegraf
+#        pull: true
+#        volumes:
+#          - "{{ telegraf }}/telegraf.conf:/etc/telegraf/telegraf.conf:ro"
+#          - "/var/run/docker.sock:/var/run/docker.sock:ro"
+#        ports:
+#          - "161:161"
+#        networks:
+#          - name: stats
+#            ipv4_address: "172.16.1.3"
+#            aliases:
+#              - "telegraf"
+#        networks_cli_compatible: yes
+#        restart_policy: unless-stopped
+#        memory: 1g
+#        cpu_period: 100000
+#        cpu_quota: 25000
+########################################################
+###################### Grafana #########################
+########################################################
+#    - name: Grafana docker
+#      tags:
+#        - "grafana"
+#      docker_container:
+#        name: grafana
+#        image: grafana/grafana
+#        pull: true
+#        volumes:
+#          - "{{ grafana }}/data:/var/lib/grafana:rw"
+#          - "{{ grafana }}/config/provisioning:/etc/grafana/provisioning:ro"
+#        ports:
+#          - "3000:3000"
+#        networks:
+#          - name: stats
+#            ipv4_address: "172.16.1.4"
+#            aliases:
+#              - "grafana"
+#        networks_cli_compatible: yes
+#        env:
+#          GF_SERVER_ROOT_URL: "http://picard:3000"
+#          GF_SECURITY_ADMIN_PASSWORD: "test"
+#        restart_policy: unless-stopped
+#        memory: 1g
+#        cpu_period: 100000
+#        cpu_quota: 25000
 #######################################################
 ################### download_hub ######################
 #######################################################
