@@ -1,12 +1,21 @@
 ---
-- hosts: server
+- hosts: pis
   tasks:
 ######################################################################################
 #                                 Create Folders                                     #
 ######################################################################################
-    - name: stats tasks
-      import_tasks: tasks/stats.yml
-      tags: stats
+    - name: Create telegraf dirs
+      file:
+        path: "{{ item }}"
+        state: directory
+      with_items:
+        - "{{ telegraf }}"
+      become: yes
+    - name: Template telegraf.conf
+      template:
+        src: ../templates/telegraf-master.conf
+        dest: "{{ telegraf }}/telegraf.conf"
+      become: yes
 
 ######################################################################################
 #                                 Docker Containers                                  #
@@ -28,13 +37,8 @@
           - "/var/run/docker.sock:/var/run/docker.sock:ro"
         ports:
           - "161:161"
-        networks:
-          - name: stats
-            ipv4_address: "172.16.1.3"
-            aliases:
-              - "telegraf"
-        networks_cli_compatible: yes
         restart_policy: unless-stopped
         memory: 1g
         cpu_period: 100000
         cpu_quota: 25000
+      become: yes

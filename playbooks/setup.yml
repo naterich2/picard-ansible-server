@@ -1,0 +1,36 @@
+---
+- hosts: pis
+  tasks:
+# Install needed apt packages
+  - name: Install via APT
+    apt:
+      name: "{{ packages }}"
+      update_cache: yes
+    vars:
+      packages:
+        - vim
+        - python3-pip
+    become: yes
+          
+  - name: Install docker
+    shell: "curl -fsSL get.docker.com -o get-docker.sh | bash"
+    become: yes
+  
+  - name: Install docker-py
+    pip:
+      name: docker-py
+    become: yes
+
+  - name: Add user to correct group
+    user:
+      name: pi
+      groups:
+        - docker
+      append: yes
+
+  - name: Create correct link for python
+    file:
+      src: /usr/bin/python3
+      dest: /usr/bin/python
+      state: link
+    become: yes
