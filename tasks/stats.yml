@@ -24,7 +24,7 @@
 
 - name: Template telegraf.conf
   template:
-    src: templates/telegraf.conf
+    src: templates/telegraf-slave.conf
     dest: "{{ telegraf }}/telegraf.conf"
 
 - name: Template Grafana data source
