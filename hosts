@@ -42,7 +42,7 @@
 
 ## db-[99:101]-node.example.com
 [server]
-localhost   ansible_python_interpreter=/usr/bin/python3
+localhost   ansible_python_interpreter=/usr/bin/python3 ansible_connection=local
 [pis]
 janeway.nrichman.lan ansible_ssh_user=pi ansible_python_interpreter=/usr/bin/python3
 data.nrichman.lan ansible_ssh_user=pi ansible_python_interpreter=/usr/bin/python3
