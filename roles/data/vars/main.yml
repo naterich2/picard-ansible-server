@@ -1,2 +1,3 @@
-infludb: /docker/influxdb
+influxdb: /docker/influxdb
+grafana: /docker/grafana
 

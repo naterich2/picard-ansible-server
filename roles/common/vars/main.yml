@@ -1,0 +1,2 @@
+telegraf: /docker/telegraf
+stat_collection_interval: 20s

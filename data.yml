@@ -1,0 +1,5 @@
+---
+
+- hosts: data.nrichman.lan
+  roles:
+    - data

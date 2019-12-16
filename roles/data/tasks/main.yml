@@ -1,0 +1,75 @@
+#								
+#								     _       _        
+#								  __| | __ _| |_ __ _ 
+#								 / _` |/ _` | __/ _` |
+#								| (_| | (_| | || (_| |
+#								 \__,_|\__,_|\__\__,_|
+#								                      
+#								
+########################################################
+################ Files and Directories #################
+########################################################
+- name: Create Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    recurse: yes
+  with_items:
+    - "{{ influxdb  }}/etc"
+    - "{{ influxdb }}/var"
+    - "{{ grafana }}"
+    - "{{ grafana }}/data"
+    - "{{ grafana }}/config/"
+    - "{{ grafana }}/config/provisioning"
+    - "{{ grafana }}/config/provisioning/datasources"
+  become: yes
+
+- name: Template Grafana data source
+  template:
+    src: ../templates/grafana.j2
+    dest: "{{ grafana }}/config/provisioning/datasources/{{ influxdb_name }}.yml"
+  become: yes
+
+########################################################
+###################### Grafana #########################
+########################################################
+- name: Grafana docker
+  docker_container:
+    name: grafana
+    image: grafana/grafana
+    pull: true
+    volumes:
+      - "{{ grafana }}/data:/var/lib/grafana:rw"
+      - "{{ grafana }}/config/provisioning:/etc/grafana/provisioning:ro"
+    ports:
+      - "3000:3000"
+    env:
+      GF_SERVER_ROOT_URL: "http://{{ ansible_facts['hostname'] }}.nrichman.lan:3000"
+      GF_SECURITY_ADMIN_PASSWORD: "test"
+    restart_policy: unless-stopped
+    memory: 1g
+    cpu_period: 100000
+    cpu_quota: 25000
+
+########################################################
+###################### Influxdb ########################
+########################################################
+- name: InfluxDB
+  docker_container:
+    name: influxdb
+    image: influxdb
+    pull: true
+    volumes:
+      - "{{ influxdb }}/var:/var/lib/influxdb:rw"
+      - "{{ influxdb }}/etc:/etc/influxdb:rw"
+    ports:
+      - "8086:8086"
+      - "8083:8083"
+    restart_policy: unless-stopped
+    env:
+      INFLUXDB_LOGGING_LEVEL: "error"
+      INFLUXDB_ADMIN_ENABLED: "true"
+    memory: 1g
+    cpu_period: 100000
+    cpu_quota: 25000
+

@@ -7,21 +7,20 @@
 #General                                           
 docker: /docker
 timezone: America/Chicago
+influxdb_name: influxdb.nrichman.lan
 
 #Plex config
 plex_config: /docker/plex
 plex_library: /media/Library
 
-#InfluxDB and Telegraf
-influxdb: /docker/influxdb
-telegraf: /docker/telegraf
-grafana: /docker/grafana
-stat_collection_interval: 20s 
 
 #Gitlab
 gitlab: /docker/gitlab
 gitlab_data: /media/gitlab
 gitea: /media/gitea
+
+#Radius
+freeradius: /docker/freeradius
 
 #OpenVPN and Transmission
 vpn_provider: TORGUARD
