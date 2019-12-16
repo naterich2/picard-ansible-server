@@ -7,6 +7,12 @@
 
     - name: Stats directory creation
       import_tasks: ../tasks/stats.yml
+    - name: Create freeradius folders
+      file:
+        path: "/docker/freeradius"
+        recurse: yes
+        state: directory
+      become: yes
 ######################################################################################
 #                                 Docker Networks                                    #
 ######################################################################################
@@ -76,7 +82,7 @@
     - name: Grafana docker
       docker_container:
         name: grafana
-        image: grafana/grafana
+        image: grafana/grafana:6.3.4
         pull: true
         volumes:
           - "{{ grafana  }}/data:/var/lib/grafana:rw"
@@ -84,11 +90,28 @@
         ports:
           - "3000:3000"
         networks_cli_compatible: yes
+        env:
+          GF_SERVER_ROOT_URL: "http://data:3000"
         networks: 
           - name: stats 
             ipv4_address: "172.16.0.4"
             aliases:
               - grafana
+        restart_policy: unless-stopped
+      become: yes
+#######################################################
+################### FreeRADIUS ########################
+#######################################################
+    - name: FreeRADIUS docker
+      docker_container:
+        name: freeradius
+        image: tgbyte/freeradius
+        pull: true
+        volumes:
+          - "/docker/freeradius:/etc/raddb:rw"
+        ports:
+          - "1812:1812/udp"
+          - "1813:1813/udp"
         restart_policy: unless-stopped
       become: yes
 
