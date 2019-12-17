@@ -1,13 +1,15 @@
-#             _                             
-# _ __   __ _| |_ ___       _ __   __ _ ___ 
-#| '_ \ / _` | __/ _ \_____| '_ \ / _` / __|
-#| | | | (_| | ||  __/_____| | | | (_| \__ \
-#|_| |_|\__,_|\__\___|     |_| |_|\__,_|___/
+#			            _      _                             _             
+#			 _ __  _ __(_) ___| |__  _ __ ___   __ _ _ __   | | __ _ _ __  
+#			| '_ \| '__| |/ __| '_ \| '_ ` _ \ / _` | '_ \  | |/ _` | '_ \ 
+#			| | | | |  | | (__| | | | | | | | | (_| | | | |_| | (_| | | | |
+#			|_| |_|_|  |_|\___|_| |_|_| |_| |_|\__,_|_| |_(_)_|\__,_|_| |_|
+#                                                               
 
 #General                                           
 docker: /docker
 timezone: America/Chicago
 influxdb_name: 10.0.1.7
+dns: 10.0.1.6
 
 #Plex config
 plex_config: /docker/plex
@@ -48,4 +50,3 @@ nextcloud_admin: admin
 #Jackett, Radarr, Sonarr, Lidarr
 jackett: /docker/Jackett
 jackett_torrent_blackhole: /media/download_hub/Downloads/jackett
-
