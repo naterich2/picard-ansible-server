@@ -1,7 +1,7 @@
 ---
 
 # Start telegraf on all collecting hosts
-- hosts: data-slave
+- hosts: data_slave
   roles:
     - common
   tags:
@@ -9,7 +9,7 @@
 
 #Start telegraf (with snmp agent collection),
 # influxdb and grafana on master
-- hosts: data-master
+- hosts: data_master
   roles:
     - data
   tags:
