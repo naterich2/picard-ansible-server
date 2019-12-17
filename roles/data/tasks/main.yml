@@ -84,12 +84,18 @@
 ########################################################
 ###################### Telegraf ########################
 ########################################################
+- name: Include credentials
+  include_vars:
+    file: ../vars/credentials.yml
+- name: Login to Docker Repo
+  docker_login:
+    username: "{{ docker_login }}"
+    password: "{{ docker_passwd }}"
 
 - name: Telegraf docker
   docker_container:
     name: telegraf
-    image: telegraf-snmp:latest
-    pull: false
+    image: nrichman2/telegraf_snmp:armhf #telegraf-snmp hash so it's not pulled
     volumes:
       - "{{ telegraf }}/telegraf.conf:/etc/telegraf/telegraf.conf:ro"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
@@ -101,4 +107,8 @@
       - "{{ dns }}"
     cpu_period: 100000
     cpu_quota: 25000
+
+- name: Log out of Docker Repo
+  docker_login:
+    state: absent
 
