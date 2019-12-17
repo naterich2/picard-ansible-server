@@ -1,6 +1,7 @@
 - name: Make Telegraf Dir
   file:
     path: "{{ telegraf  }}"
+    state: directory
   become: yes
 
 - name: Template Telegraf Slave
@@ -22,6 +23,8 @@
       - "161:161"
     restart_policy: unless-stopped
     memory: 1g
+    dns_servers:
+      - 10.0.1.6
     cpu_period: 100000
     cpu_quota: 25000
 
