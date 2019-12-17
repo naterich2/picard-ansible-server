@@ -1,5 +1,13 @@
 ---
 
-- hosts: data.nrichman.lan
+# Start telegraf on all collecting hosts
+- hosts: data-slave
+  roles:
+    - common
+
+#Start telegraf (with snmp agent collection),
+# influxdb and grafana on master
+- hosts: data-master
   roles:
     - data
+
