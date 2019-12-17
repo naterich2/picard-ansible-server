@@ -22,12 +22,20 @@
     - "{{ grafana }}/config/"
     - "{{ grafana }}/config/provisioning"
     - "{{ grafana }}/config/provisioning/datasources"
+    - "{{ telegraf  }}"
   become: yes
 
 - name: Template Grafana data source
   template:
     src: ../templates/grafana.j2
     dest: "{{ grafana }}/config/provisioning/datasources/{{ influxdb_name }}.yml"
+  become: yes
+
+- name: Template Telegraf Slave
+  template:
+    src: "../templates/telegraf-master.j2"
+    dest: "{{ telegraf }}/telegraf.conf"
+    owner: root
   become: yes
 
 ########################################################
@@ -70,6 +78,27 @@
       INFLUXDB_LOGGING_LEVEL: "error"
       INFLUXDB_ADMIN_ENABLED: "true"
     memory: 1g
+    cpu_period: 100000
+    cpu_quota: 25000
+
+########################################################
+###################### Influxdb ########################
+########################################################
+
+- name: Telegraf docker
+  docker_container:
+    name: telegraf
+    image: telegraf
+    pull: true
+    volumes:
+      - "{{ telegraf }}/telegraf.conf:/etc/telegraf/telegraf.conf:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    ports:
+      - "161:161"
+    restart_policy: unless-stopped
+    memory: 1g
+    dns_servers:
+      - 10.0.1.6
     cpu_period: 100000
     cpu_quota: 25000
 
