@@ -151,7 +151,7 @@
 #                            INPUT PLUGINS                                    #
 ###############################################################################
 [[inputs.snmp]]
-  agents = [ "10.0.1.14:161" ]
+  agents = [ "10.0.1.14:161","10.0.1.2:161" ]
   version = 2
   community = "nrichman.lan"
 
@@ -160,21 +160,11 @@
     name = "hostname"
     is_tag = true
   
-  [[inputs.snmp.table]]
-    oid = "IF-MIB::ifInOctets"
+  [[inputs.snmp.tables]]
+    name ="interface"
+    oid = "IF-MIB::ifTable"
     inherit_tags = [ "hostname" ]
 
-  [[inputs.snmp.table]]
-    oid = "IF-MIB::ifInErrors"
-    inherit_tags = [ "hostname" ]
-
-  [[inputs.snmp.table]]
-    oid = "IF-MIB::ifOutOctets"
-    inherit_tags = [ "hostname" ]
-
-  [[inputs.snmp.table]]
-    oid = "IF-MIB::ifOutErrors"
-    inherit_tags = [ "hostname" ]
 
 
 # Read metrics about cpu usage
