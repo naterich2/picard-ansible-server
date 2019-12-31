@@ -1,0 +1,12 @@
+---
+- name: Create Lidarr/Radarr/Sonarr/Jackett Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ download_hub }}/lidarr:/config"
+    - "{{ download_hub }}/radarr:/config"
+    - "{{ download_hub }}/sonarr:/config"
+    - "{{ jackett }}"
+    - "{{ jackett_torrent_blackhole }}"
+  become: yes

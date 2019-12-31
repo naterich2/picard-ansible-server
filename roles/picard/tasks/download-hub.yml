@@ -1,0 +1,16 @@
+---
+- name: Create Download-Hub Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    # mode: 0755
+  with_items:
+    - "{{ download_hub }}/transmission_config"
+    - "{{ download_hub }}/Downloads/transmission"
+    - "{{ download_hub }}/soulseek_appdata"
+    - "{{ download_hub }}/soulseek_logs"
+    - "{{ download_hub }}/deezloader_config"
+    - "{{ download_hub }}/Downloads/soulseek"
+    - "{{ download_hub }}/Downloads/deezloader"
+  become: yes
+

@@ -1,0 +1,52 @@
+#			            _      _                             _             
+#			 _ __  _ __(_) ___| |__  _ __ ___   __ _ _ __   | | __ _ _ __  
+#			| '_ \| '__| |/ __| '_ \| '_ ` _ \ / _` | '_ \  | |/ _` | '_ \ 
+#			| | | | |  | | (__| | | | | | | | | (_| | | | |_| | (_| | | | |
+#			|_| |_|_|  |_|\___|_| |_|_| |_| |_|\__,_|_| |_(_)_|\__,_|_| |_|
+#                                                               
+
+#General                                           
+docker: /docker
+timezone: America/Chicago
+influxdb_name: 10.0.1.7
+dns: 10.0.1.6
+
+#Plex config
+plex_config: /docker/plex
+plex_library: /media/Library
+
+
+#Gitlab
+gitlab: /docker/gitlab
+gitlab_data: /media/gitlab
+gitea: /media/gitea
+
+#Radius
+freeradius: /docker/freeradius
+
+#OpenVPN and Transmission
+vpn_provider: TORGUARD
+download_hub: /media/download_hub
+transmission_local_network: "10.0.1.0/26,10.0.10.0/26,10.0.101.0/24,10.0.102.0/26,192.168.1.1"
+
+#Soulseek
+soulseek: /docker/Soulseek
+soulseek_downloads: /media/Soulseek
+
+#Deezloader
+deezloader_config: /docker/deezloader
+deezloader_downloads: /media/Deezloader
+
+#Organizr
+organizr: /docker/Organizr
+
+#Mariadb
+mariadb: /var/lib/mysql
+
+#Nextcloud
+nextcloud: /media/nextcloud
+nextcloud_admin: admin
+
+#Jackett, Radarr, Sonarr, Lidarr
+jackett: /docker/Jackett
+jackett_torrent_blackhole: /media/download_hub/Downloads/jackett
