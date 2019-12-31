@@ -47,6 +47,9 @@ ansible_python_interpreter=/usr/bin/python3
 [ubuntu]
 localhost ansible_connection=local
 
+[picard]
+localhost
+
 [raspbian]
 janeway.nrichman.lan
 data.nrichman.lan

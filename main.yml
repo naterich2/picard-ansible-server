@@ -1,5 +1,5 @@
 ---
-- hosts: server
+- hosts: picard
   connection: local
   tasks:
     - name: Include VPN credentials
