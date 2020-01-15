@@ -1,8 +1,3 @@
-- name: Include VPN credentials
-  tags:
-    - download_hub
-  include_vars:
-    file: ../vars/credentials.yml
 
 ######################################################################################
 #                                 Create Folders                                     #
@@ -10,10 +5,6 @@
 - name: plex tasks
   import_tasks: plex.yml
   tags: plex
-
-- name: download_hub tasks
-  import_tasks: download-hub.yml
-  tags: download_hub
 
 - name: gitea tasks
   import_tasks: gitea.yml
@@ -23,14 +14,6 @@
 #  import_tasks: nextcloud.yml
 #  tags: nextcloud
 
-- name: sonarr/radarr/lidarr/jackett tasks
-  import_tasks: rrs.yml
-  tags: 
-   - lidarr
-   - sonarr
-   - radarr
-   - jackett
-   - rrs
 ######################################################################################
 #                                 Docker Networks                                    #
 ######################################################################################
@@ -126,60 +109,6 @@
     cpu_period: 100000
     cpu_quota: 25000
 #######################################################
-################### download_hub ######################
-#######################################################
-- name: download_hub with VPN
-  tags:
-    - download_hub
-  docker_container:
-    name: download_hub
-    image: nrichman/download-hub
-    volumes:
-      - "/etc/localtime:/etc/localtime:ro"
-      - "/etc/timezone:/etc/timezone:ro"
-      - "{{ download_hub }}/transmission_config:/config:rw"
-      - "{{ download_hub }}/Downloads/transmission:/storage/downloads:rw"
-      - "{{ download_hub }}/soulseek_appdata:/root/.SoulseekQt"
-      - "{{ download_hub }}/soulseek_logs:/root/Soulseek Chat Logs"
-      - "{{ download_hub }}/Downloads/soulseek:/root/Soulseek Downloads"
-      - "{{ download_hub }}/Downloads/deezloader:/downloads"
-      - "{{ download_hub }}/deezloader_config:/root/.config/Deezloader Remix/config"
-      - "{{ plex_library }}:/root/Library:ro"
-    ports:
-      - "9091:9091/tcp"
-      - "9091:9091/udp"
-      - "6080:6080"
-      - "1730:1730"
-    networks:
-      - name: torrent
-        ipv4_address: "172.16.2.2"
-        aliases:
-          - "download_hub"
-    networks_cli_compatible: yes
-    env:
-      TRANSMISSION_HOME: /config
-      TRANSMISSION_DOWNLOAD_DIR: /storage/downloads/complete
-      TRANSMISSION_INCOMPLETE_DIR: /storage/downloads/incomplete
-      TRANSMISSION_WATCH_DIR: /storage/watch
-      OPENVPN_PROVIDER: "{{ vpn_provider }}"
-      OPENVPN_USERNAME: "{{ vpn_username }}"
-      OPENVPN_PASSWORD: "{{ vpn_password }}"
-      OPENVPN_CONFIG: "{{ vpn_config }}"
-      OPENVPN_OPTS: "--redirect-gateway def1 --mssfix 1450"
-      PUID: "0"
-      PGID: "0"
-      LOCAL_NETWORK: "{{ transmission_local_network }}"
-      ENABLE_UFW: "false"
-      CREATE_TUN_DEVICE: "true"
-      TRANSMISSION_RPC_USERNAME: "{{ transmission_username }}"
-      TRANSMISSION_RPC_PASSWORD: "{{ transmission_password }}"
-    capabilities:
-      - NET_ADMIN
-    restart_policy: unless-stopped
-    memory: 1g
-    cpu_period: 100000
-    cpu_quota: 50000
-#######################################################
 ####################### Gitea #########################
 #######################################################
 - name: Gitea docker image
@@ -200,34 +129,6 @@
     networks_cli_compatible: yes
     restart_policy: unless-stopped
     memory: 1g
-#######################################################
-###################### MariaDB ########################
-#######################################################
-- name: Mariadb docker
-  docker_container:
-    name: mariadb
-    image: yobasystems/alpine-mariadb
-    hostname: mariadb
-    pull: true
-    volumes:
-      - "{{ mariadb }}:/var/lib/mysql"
-    env:
-      MYSQL_DATABASE: "blog"
-      MYSQL_USER: "mysql"
-      MYSQL_PASSWORD: "{{ mariadb_password }}"
-      MYSQL_ROOT_PASSWORD: "{{ mariadb_password }}"
-    ports:
-      - "3306:3306"
-    networks:
-      - name: main
-        ipv4_address: "172.16.100.3"
-        aliases:
-          - "mariadb"
-    networks_cli_compatible: yes
-    restart_policy: unless-stopped
-    memory: 1g 
-    cpu_period: 100000
-    cpu_quota: 15000
 #######################################################
 ##################### Nextcloud #######################
 #######################################################

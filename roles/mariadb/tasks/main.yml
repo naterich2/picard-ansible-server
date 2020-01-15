@@ -1,0 +1,24 @@
+
+#######################################################
+###################### MariaDB ########################
+#######################################################
+- name: Mariadb docker
+  docker_container:
+    name: mariadb
+    image: yobasystems/alpine-mariadb
+    hostname: mariadb
+    pull: true
+    volumes:
+      - "{{ mariadb }}:/var/lib/mysql"
+    ports:
+      - "3306:3306"
+    networks:
+      - name: main
+        ipv4_address: "172.16.100.3"
+        aliases:
+          - "mariadb"
+    networks_cli_compatible: yes
+    restart_policy: unless-stopped
+    memory: 1g 
+    cpu_period: 100000
+    cpu_quota: 15000
