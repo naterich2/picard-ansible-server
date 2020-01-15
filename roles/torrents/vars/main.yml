@@ -1,0 +1,3 @@
+#Jackett, Radarr, Sonarr, Lidarr
+jackett: /docker/Jackett
+jackett_torrent_blackhole: /media/download_hub/Downloads/jackett
