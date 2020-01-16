@@ -1,0 +1,5 @@
+
+#Nextcloud
+nextcloud: /media/nextcloud
+nextcloud_admin: admin
+mariadb_user: nextcloud

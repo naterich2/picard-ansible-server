@@ -43,7 +43,4 @@ organizr: /docker/Organizr
 #Mariadb
 mariadb: /var/lib/mysql
 
-#Nextcloud
-nextcloud: /media/nextcloud
-nextcloud_admin: admin
 
