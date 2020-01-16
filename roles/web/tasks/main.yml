@@ -129,36 +129,4 @@
     networks_cli_compatible: yes
     restart_policy: unless-stopped
     memory: 1g
-#######################################################
-##################### Nextcloud #######################
-#######################################################
-#- name: Nextcloud Docker 
-#  docker_container:
-#    name: nextcloud
-#    image: nextcloud:latest
-#    pull: true
-#    volumes:
-#      - "{{ nextcloud }}/html:/var/www/html"
-#      - "{{ nextcloud }}/config:/var/www/html/config"
-#      - "{{ nextcloud }}/html:/var/www/html/data"
-#    env:
-#      MYSQL_DATABASE: "nextcloud"
-#      MYSQL_USER: "mysql"
-#      MYSQL_PASSWORD: "{{ mariadb_password }}"
-#      MYSQL_HOST: "172.17.0.2:3306"
-#      NEXTCLOUD_ADMIN_USER: "{{ nextcloud_admin }}"
-#      NEXTCLOUD_ADMIN_PASSWORD: "{{ nextcloud_admin_password }}"
-#      #NEXTCLOUD_TRUSTED_DOMAINS: "nrichman.dev www.nrichman.dev"
-#    ports:
-#      - "3005:80"
-#    networks:
-#      - name: main
-#        ipv4_address: "172.16.100.4"
-#        aliases:
-#          - "nextcloud"
-#    networks_cli_compatible: yes
-#    restart_policy: unless-stopped
-#    memory: 1g 
-#    cpu_period: 100000
-#    cpu_quota: 50000
     
