@@ -1,0 +1,5 @@
+---
+# Start Keycloak
+- hosts: picard
+  roles:
+    - keycloak
