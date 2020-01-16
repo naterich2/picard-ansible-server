@@ -20,10 +20,16 @@
     env:
       PUID: "1000"
       PGID: "1000"
-      DB_HOST: "127.0.0.1"
+      DB_HOST: "172.16.100.1"
       DB_USER: "bookstack"
       DB_PASS: '{{ bookstack_pass }}'
       DB_DATABASE: "bookstack"
+    networks_cli_compatible: yes
+    networks:
+       - name: main
+         ipv4_address: "172.16.100.4"
+         aliases:
+           - "bookstack"
     volumes:
       - "{{ bookstack_config }}:/config"
     restart_policy: 'unless-stopped'  
