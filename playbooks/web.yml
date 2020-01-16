@@ -1,0 +1,7 @@
+
+---
+
+# Start web servers/services
+- hosts: picard
+  roles:
+    - web
