@@ -15,8 +15,6 @@ dns: 10.0.1.6
 plex_config: /docker/plex
 plex_library: /media/Library
 
-#Bookstack
-bookstack_config: /docker/bookstack
 
 #Gitlab
 gitlab: /docker/gitlab
@@ -25,19 +23,6 @@ gitea: /media/gitea
 
 #Radius
 freeradius: /docker/freeradius
-
-#OpenVPN and Transmission
-vpn_provider: TORGUARD
-download_hub: /media/download_hub
-transmission_local_network: "10.0.1.0/26,10.0.10.0/26,10.0.101.0/24,10.0.102.0/26,192.168.1.1/24"
-
-#Soulseek
-soulseek: /docker/Soulseek
-soulseek_downloads: /media/Soulseek
-
-#Deezloader
-deezloader_config: /docker/deezloader
-deezloader_downloads: /media/Deezloader
 
 #Organizr
 organizr: /docker/Organizr
@@ -49,6 +34,3 @@ mariadb: /var/lib/mysql
 nextcloud: /media/nextcloud
 nextcloud_admin: admin
 
-#Jackett, Radarr, Sonarr, Lidarr
-jackett: /docker/Jackett
-jackett_torrent_blackhole: /media/download_hub/Downloads/jackett
