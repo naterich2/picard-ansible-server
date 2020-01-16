@@ -1,0 +1,7 @@
+---
+
+# Start telegraf on all collecting hosts
+- hosts: picard
+  roles:
+    - bookstack
+
