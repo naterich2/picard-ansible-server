@@ -129,4 +129,13 @@
     networks_cli_compatible: yes
     restart_policy: unless-stopped
     memory: 1g
+#######################################################
+################### nrichman.dev ######################
+#######################################################
+- name: nrichman.dev docker
+  docker_container: 
+    name: nrichman.dev
+    image: nrichman2/nrichman.dev
+    ports:
+      - "8080:3000"
     
