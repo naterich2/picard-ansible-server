@@ -1,20 +1,5 @@
 
 ######################################################################################
-#                                 Create Folders                                     #
-######################################################################################
-- name: plex tasks
-  import_tasks: plex.yml
-  tags: plex
-
-- name: gitea tasks
-  import_tasks: gitea.yml
-  tags: gitea
-
-#- name: nextcloud tasks
-#  import_tasks: nextcloud.yml
-#  tags: nextcloud
-
-######################################################################################
 #                                 Docker Networks                                    #
 ######################################################################################
 - name: Docker main network
@@ -52,32 +37,6 @@
 #
 #
 #######################################################
-###################### Plex ###########################
-#######################################################
-- name: plex Docker Container
-  tags:
-    - plex
-  docker_container:
-    name: plex
-    image: linuxserver/plex
-    pull: true
-    volumes:
-      - "{{ plex_config }}:/config:rw"
-      - "{{ plex_library }}/Movies:/movies:rw"
-      - "{{ plex_library }}/TV\ Shows:/tv:rw"
-      - "{{ plex_library }}/Music:/music:ro"
-      - "{{ plex_library }}/Other:/other:ro"
-    network_mode: "host"
-    env:
-      TZ: "{{ timezone }}"
-      VERSION: "docker"
-      PUID: "1000"
-      PGID: "1000"
-    restart_policy: unless-stopped
-    memory: 1g
-    cpu_period: 100000
-    cpu_quota: 100000
-#######################################################
 ###################### NGINX ##########################
 #######################################################
 - name: NGINX Docker Container
@@ -108,27 +67,6 @@
     memory: 1g
     cpu_period: 100000
     cpu_quota: 25000
-#######################################################
-####################### Gitea #########################
-#######################################################
-- name: Gitea docker image
-  docker_container:
-    name: gitea
-    image: gitea/gitea
-    pull: true
-    hostname: git.nrichman.dev
-    volumes:
-      - "{{ gitea }}:/data:rw"
-    ports:
-      - "28000:3000"
-    networks:
-      - name: main
-        ipv4_address: "172.16.100.2"
-        aliases:
-          - "git"
-    networks_cli_compatible: yes
-    restart_policy: unless-stopped
-    memory: 1g
 #######################################################
 ################### nrichman.dev ######################
 #######################################################

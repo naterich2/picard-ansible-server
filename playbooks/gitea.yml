@@ -1,0 +1,7 @@
+
+---
+
+# Start gitea
+- hosts: picard
+  roles:
+    - gitea

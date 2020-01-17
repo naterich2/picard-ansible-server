@@ -17,8 +17,6 @@ plex_library: /media/Library
 
 
 #Gitlab
-gitlab: /docker/gitlab
-gitlab_data: /media/gitlab
 gitea: /media/gitea
 
 #Radius

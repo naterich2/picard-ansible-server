@@ -1,0 +1,7 @@
+
+---
+
+# Start plex
+- hosts: picard
+  roles:
+    - plex
