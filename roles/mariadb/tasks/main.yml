@@ -12,6 +12,8 @@
       - "{{ mariadb }}:/var/lib/mysql"
     ports:
       - "3306:3306"
+    env:
+      MYSQL_ROOT_PASSWORD: "{{ mariadb_password }}"
     networks:
       - name: main
         ipv4_address: "172.16.100.3"
