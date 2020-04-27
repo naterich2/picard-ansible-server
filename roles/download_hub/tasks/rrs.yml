@@ -4,9 +4,9 @@
     path: "{{ item }}"
     state: directory
   with_items:
-    - "{{ download_hub }}/lidarr:/config"
-    - "{{ download_hub }}/radarr:/config"
-    - "{{ download_hub }}/sonarr:/config"
+    - "{{ download_hub }}/lidarr"
+    - "{{ download_hub }}/radarr"
+    - "{{ download_hub }}/sonarr"
     - "{{ jackett }}"
     - "{{ jackett_torrent_blackhole }}"
   become: yes
