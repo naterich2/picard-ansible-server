@@ -30,15 +30,15 @@
     - rrs
   docker_container:
     name: lidarr
-    image: linuxserver/lidarr
+    image: linuxserver/lidarr:latest
     pull: true
     volumes:
       - "{{ download_hub }}/lidarr:/config"
       - "{{ download_hub }}/Downloads/transmission/complete:/storage/downloads/complete"
       - "{{ plex_library }}/Music:/music"
     env:
-      PUID: "1000"
-      PGID: "1000"
+      PUID: "117"
+      PGID: "123"
       TZ: "America/Chicago"
     ports:
       - "3007:8686"
@@ -55,13 +55,24 @@
 #######################################################
 ####################### Radarr ########################
 #######################################################
+- name: Template radarr autoProcess
+  template:
+    src: ../templates/autoProcess.ini.j2
+    dest: "{{ download_hub }}/sickbeard/radarr/autoProcess.ini"
+    owner: rrs
+    group: transmission
+  vars:
+    output: "{{radarr_output}}"
+  become: yes
+
 - name: radarr container
   tags:
     - radarr
     - rrs
   docker_container:
     name: radarr
-    image: linuxserver/radarr:latest
+    image: mdhiggins/radarr-sma:latest
+    pull: true
     state: started
     restart_policy: unless-stopped
     ports:
@@ -74,22 +85,33 @@
     networks_cli_compatible: yes
     env:
       TZ: "America/Chicago"
-      PGID: "1000"
-      PUID: "1000"
+      PGID: "123"
+      PUID: "119"
     volumes:
       - "{{ plex_library }}/Movies:/movies"
       - "{{ download_hub }}/Downloads/transmission/complete:/downloads"
-      - "{{ download_hub }}/radarr:/config"
+      - "{{ download_hub }}/radarr:/config:rw"
+      - "{{ download_hub }}/sickbeard/radarr:/usr/local/sma/config"
     memory: 1g 
     cpu_period: 100000
     cpu_quota: 55000
 #######################################################
 ####################### Sonarr ########################
 #######################################################
+- name: Template sonarr autoProcess
+  template:
+    src: ../templates/autoProcess.ini.j2
+    dest: "{{ download_hub }}/sickbeard/sonarr/autoProcess.ini"
+    owner: rrs
+    group: transmission
+  vars:
+    output: "{{sonarr_output}}"
+  become: yes
 - name: sonarr container
   docker_container:
     name: sonarr
-    image: linuxserver/sonarr
+    image: mdhiggins/sonarr-sma:latest
+    pull: true
     state: started
     restart_policy: unless-stopped
     ports:
@@ -102,12 +124,13 @@
     networks_cli_compatible: yes
     env:
       TZ: "America/Chicago"
-      PGID: "1000"
-      PUID: "1000"
+      PGID: "123"
+      PUID: "119"
     volumes:
       - "{{ plex_library }}/TV\ Shows:/tv"
       - "{{ download_hub }}/Downloads/transmission/complete:/downloads"
-      - "{{ download_hub }}/sonarr:/config"
+      - "{{ download_hub }}/sonarr:/config:rw"
+      - "{{ download_hub }}/sickbeard/sonarr:/usr/local/sma/config"
     memory: 1g 
     cpu_period: 100000
     cpu_quota: 55000
@@ -117,7 +140,8 @@
 - name: Jackett Container
   docker_container:
     name: jackett
-    image: linuxserver/jackett
+    image: linuxserver/jackett:latest
+    pull: true
     state: started
     restart_policy: unless-stopped
     ports:
@@ -130,8 +154,8 @@
     networks_cli_compatible: yes
     env:
       TZ: "America/Chicago"
-      PGID: "1000"
-      PUID: "1000"
+      PGID: "123"
+      PUID: "119"
     volumes:
       - "{{ jackett }}:/config"
       - "{{ jackett_torrent_blackhole }}:/downloads"

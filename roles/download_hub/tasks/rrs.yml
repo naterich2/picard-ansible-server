@@ -3,10 +3,14 @@
   file:
     path: "{{ item }}"
     state: directory
+    owner: rrs
+    group: transmission
   with_items:
     - "{{ download_hub }}/lidarr"
     - "{{ download_hub }}/radarr"
     - "{{ download_hub }}/sonarr"
+    - "{{ download_hub }}/sickbeard/radarr"
+    - "{{ download_hub }}/sickbeard/sonarr"
     - "{{ jackett }}"
     - "{{ jackett_torrent_blackhole }}"
   become: yes
