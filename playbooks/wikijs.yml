@@ -1,0 +1,6 @@
+---
+
+# Start wikijs
+- hosts: picard
+  roles:
+    - wikijs

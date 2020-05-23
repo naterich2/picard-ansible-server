@@ -1,0 +1,56 @@
+---
+
+# Start web servers/services
+- hosts: picard
+  roles:
+    - web
+
+#Start mariadb
+- hosts: picard
+  roles:
+    - mariadb
+
+# Start plex
+- hosts: picard
+  roles:
+    - plex
+
+# Start telegraf on all collecting hosts
+- hosts: picard
+  roles:
+    - bookstack
+
+# Start telegraf on all collecting hosts
+- hosts: data_slave
+  roles:
+    - common
+  tags:
+    - slave
+
+#Start telegraf (with snmp agent collection),
+# influxdb and grafana on master
+- hosts: data_master
+  roles:
+    - data
+  tags:
+    - master
+
+# Start gitea
+- hosts: picard
+  roles:
+    - gitea
+
+# Start nextcloud
+- hosts: picard
+  roles:
+    - nextcloud
+
+# Start download_hub
+- hosts: picard
+  roles:
+    - download_hub
+
+# Start Keycloak
+- hosts: picard
+  roles:
+    - keycloak

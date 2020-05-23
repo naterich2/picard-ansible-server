@@ -1,0 +1,6 @@
+
+---
+# Update all hosts
+- hosts: all
+  
+- name

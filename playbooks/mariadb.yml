@@ -1,0 +1,5 @@
+
+#Start mariadb
+- hosts: picard
+  roles:
+    - mariadb

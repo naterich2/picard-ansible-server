@@ -1,0 +1,6 @@
+---
+
+# Start wikijs
+- hosts: data.nrichman.lan
+  roles:
+    - dokuwiki

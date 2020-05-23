@@ -1,0 +1,7 @@
+---
+
+# Start download_hub
+- hosts: picard
+  roles:
+    - download_hub
+
