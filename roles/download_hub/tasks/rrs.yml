@@ -1,16 +1,18 @@
 ---
 - name: Create Lidarr/Radarr/Sonarr/Jackett Directories
   file:
-    path: "{{ item }}"
+    path: "{{ item.path }}"
     state: directory
-    owner: rrs
-    group: transmission
+    owner: "{{item.owner}}"
+    group: library
+    mode: 0775
   with_items:
-    - "{{ download_hub }}/lidarr"
-    - "{{ download_hub }}/radarr"
-    - "{{ download_hub }}/sonarr"
-    - "{{ download_hub }}/sickbeard/radarr"
-    - "{{ download_hub }}/sickbeard/sonarr"
-    - "{{ jackett }}"
-    - "{{ jackett_torrent_blackhole }}"
+    - { path: "{{ download_hub }}/lidarr", owner: "lidarr" }
+    - { path: "{{ download_hub }}/radarr", owner: "radarr" }
+    - { path: "{{ download_hub }}/sonarr", owner: "sonarr" }
+    - { path: "{{ download_hub }}/sickbeard", owner: "nrichman" }
+    - { path: "{{ download_hub }}/sickbeard/radarr", owner: "radarr" }
+    - { path: "{{ download_hub }}/sickbeard/sonarr", owner: "sonarr" }
+    - { path: "{{ jackett }}", owner: "jackett" }
+    - { path: "{{ jackett_torrent_blackhole }}", owner: "jackett" }
   become: yes

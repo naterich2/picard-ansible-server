@@ -1,0 +1,112 @@
+[Universal Audio]
+first-stream-only = False
+filter = 
+codec = 
+move-after = False
+channel-bitrate = 128
+
+[Sonarr]
+webroot = 
+host = localhost
+apikey = c11882541aee4acf9f29792d1a7f9fe2
+port = 8989
+ssl = False
+
+[Subtitle]
+download-subs = True
+encoding = 
+embed-only-internal-subs = False
+download-providers = addic7ed,podnapisi,thesubdb,opensubtitles
+languages = 
+codec = mov_text
+embed-subs = True
+default-language = 
+embed-image-subs = False
+codec-image-based = 
+filename-dispositions = forced
+first-stream-of-language = False
+burn-dispositions = 
+attachment-codec = 
+ignore-embedded-subs = False
+burn-subtitles = False
+download-hearing-impaired-subs = False
+
+[Converter]
+preopts = 
+copy-to = 
+ffmpeg = /usr/local/bin/ffmpeg
+delete-original = True
+ffprobe = /usr/local/bin/ffprobe
+output-extension = mp4
+postopts = 
+output-directory = {{ output }}
+post-process = False
+threads = 0
+move-to = 
+output-format = mp4
+hwaccel-decoders = h264_cuvid, mjpeg_cuvid, mpeg1_cuvid, mpeg2_cuvid, mpeg4_cuvid, vc1_cuvid, hevc_qsv, h264_qsv
+ignored-extensions = nfo, ds_store
+temp-extension = 
+minimum-size = 0
+force-convert = False
+hwaccels = dxva2, cuvid, qsv, d3d11va
+process-same-extensions = False
+sort-streams = True
+
+
+[Radarr]
+webroot = 
+host = localhost
+apikey = 8f2e27edca7041f5a8f7b777288fb80b
+port = 7878
+ssl = False
+
+[Plex]
+token = 
+host = 10.0.1.5
+port = 32400
+refresh = True
+
+
+[Video]
+profile = 
+max-level = 0.0
+max-bitrate = 0
+codec = h264, x264
+crf = -1
+max-width = 0
+pix-fmt = 
+crf-profiles = 
+
+
+[Audio]
+filter = 
+copy-original = False
+first-stream-of-language = False
+languages = eng
+codec = ac3,aac
+channel-bitrate = 128
+aac-adtstoasc = False
+default-language = 
+max-channels = 0
+default-more-channels = True
+ignore-truehd = mp4, m4v
+prefer-more-channels = True
+max-bitrate = 0
+sample-rates = 
+allow-language-relax = True
+
+[Metadata]
+relocate-moov = True
+tag = True
+download-artwork = Poster
+full-path-guess = True
+tag-language = en
+sanitize-disposition = 
+
+
+[Permissions]
+gid = 996
+uid = 0
+chmod = 0664
+
