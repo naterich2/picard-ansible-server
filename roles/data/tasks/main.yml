@@ -17,12 +17,25 @@
   with_items:
     - "{{ influxdb  }}/etc"
     - "{{ influxdb }}/var"
+    - "{{ telegraf  }}"
+  become: yes
+- name: Create grafana user
+  user:
+    name: grafana
+    uid: 472
+  become: yes
+- name: Create Grafana Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    recurse: yes
+    owner: grafana
+  with_items:
     - "{{ grafana }}"
     - "{{ grafana }}/data"
     - "{{ grafana }}/config/"
     - "{{ grafana }}/config/provisioning"
     - "{{ grafana }}/config/provisioning/datasources"
-    - "{{ telegraf  }}"
   become: yes
 
 - name: Template Grafana data source
@@ -31,7 +44,7 @@
     dest: "{{ grafana }}/config/provisioning/datasources/{{ influxdb_name }}.yml"
   become: yes
 
-- name: Template Telegraf Slave
+- name: Template Telegraf Master
   template:
     src: "../templates/telegraf-master.j2"
     dest: "{{ telegraf }}/telegraf.conf"
@@ -54,7 +67,7 @@
     env:
       GF_SERVER_ROOT_URL: "http://{{ ansible_facts['hostname'] }}.nrichman.lan:3000"
       GF_SECURITY_ADMIN_PASSWORD: "test"
-    restart_policy: unless-stopped
+      #restart_policy: 'unless-stopped'
     memory: 1g
     cpu_period: 100000
     cpu_quota: 25000
@@ -73,7 +86,7 @@
     ports:
       - "8086:8086"
       - "8083:8083"
-    restart_policy: unless-stopped
+        #restart_policy: 'unless-stopped'
     env:
       INFLUXDB_LOGGING_LEVEL: "error"
       INFLUXDB_ADMIN_ENABLED: "true"
@@ -101,7 +114,7 @@
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     ports:
       - "161:161"
-    restart_policy: unless-stopped
+        #restart_policy: 'unless-stopped'
     memory: 1g
     dns_servers:
       - "{{ dns }}"
