@@ -2,38 +2,15 @@
   include_vars:
     file: ../vars/credentials.yml
 
-#- name: Keycloak network
-#  docker_network:
-#    name: keycloak
-#    driver: bridge
-#    driver_options:
-#      com.docker.network.bridge.name: 'docker5'
-#    ipam_config:
-#      - subnet: 172.16.101.0/28
-#        gateway: 172.16.101.1
-
-#- name: Mariadb docker
-#  docker_container:
-#    name: mariadb-keycloak
-#    image: yobasystems/alpine-mariadb
-#    hostname: mariadb
-#    pull: true
-#    volumes:
-#      - "{{ mariadb }}:/var/lib/mysql"
-#    ports:
-#      - "3312:3306"
-#    networks:
-#      - name: keycloak
-#        ipv4_address: "172.16.101.2"
-#        aliases:
-#          - "mariadb"
-#    networks_cli_compatible: yes
-#    env:
-#      MYSQL_ROOT_PASSWORD: '{{ mariadb_passwd }}'
-#    restart_policy: unless-stopped
-#    memory: 1g 
-#    cpu_period: 100000
-#    cpu_quota: 15000
+- name: Keycloak network
+  docker_network:
+    name: keycloak
+    driver: bridge
+    driver_options:
+      com.docker.network.bridge.name: 'docker5'
+    ipam_config:
+      - subnet: 172.16.101.0/28
+        gateway: 172.16.101.1
 
 - name: Keycloak container
   docker_container:
@@ -42,11 +19,24 @@
     pull: true
     ports:
       - "3315:8080"
+    networks:
+      - name: main
+        ipv4_address: "172.16.100.6"
+        aliases:
+          - "keycloak"
+    networks_cli_compatible: yes
     env:
       KEYCLOAK_USER: '{{ keycloak_user }}'
       KEYCLOAK_PASSWORD: '{{ keycloak_passwd }}'
       PROXY_ADDRESS_FORWARDING: 'true'
+      DB_VENDOR: 'mariadb'
+      DB_ADDR: '10.0.1.5'
+      DB_USER: 'keycloak'
+      DB_DATABASE: 'keycloak'
+      DB_PASSWORD: '{{ mariadb_passwd }}'
+      KEYCLOAK_LOGLEVEL: 'DEBUG'
     memory: 1g 
     cpu_period: 100000
-    cpu_quota: 50000
+    cpu_quota: 90000
+
 
