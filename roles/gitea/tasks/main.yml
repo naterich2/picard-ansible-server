@@ -16,6 +16,7 @@
       - "{{ gitea }}:/data:rw"
     ports:
       - "28000:3000"
+      - "28001:22"
     networks:
       - name: main
         ipv4_address: "172.16.100.2"
