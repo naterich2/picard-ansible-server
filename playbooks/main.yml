@@ -15,10 +15,11 @@
   roles:
     - plex
 
-# Start telegraf on all collecting hosts
-- hosts: picard
-  roles:
-    - bookstack
+# Start bookstack wiki
+
+#- hosts: picard
+#  roles:
+#    - bookstack
 
 # Start telegraf on all collecting hosts
 - hosts: data_slave
@@ -41,9 +42,9 @@
     - gitea
 
 # Start nextcloud
-- hosts: picard
-  roles:
-    - nextcloud
+#- hosts: picard
+#  roles:
+#    - nextcloud
 
 # Start download_hub
 - hosts: picard
