@@ -8,7 +8,7 @@
 #General                                           
 docker: /docker
 timezone: America/Chicago
-influxdb_name: 10.0.1.7
+influxdb_name: data.nrichman.lan
 dns: 10.0.1.6
 
 #Plex config
