@@ -1,4 +1,6 @@
-
+- name: Include credentials
+  include_vars:
+    file: ../vars/credentials.yml
 #######################################################
 ###################### MariaDB ########################
 #######################################################
@@ -10,6 +12,7 @@
     pull: true
     volumes:
       - "{{ mariadb }}:/var/lib/mysql"
+      - "{{ mariadb_cnf }}:/etc/my.cnf.d"
     ports:
       - "3306:3306"
     env:
