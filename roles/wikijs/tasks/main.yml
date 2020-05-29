@@ -1,0 +1,19 @@
+- name: Include credentials
+  include_vars:
+    file: ../vars/credentials.yml
+
+- name: Start Wiki.JS
+  docker_container:
+    name: wikijs
+    image: requarks/wiki:2
+    pull: true
+    env:
+      DB_TYPE: 'mariadb'
+      DB_HOST: '10.0.1.5'
+      DB_PORT: '3306'
+      DB_USER: 'wikijs'
+      DB_PASS: '{{ wikijs_pass }}'
+      DB_NAME: 'wikijs'
+    ports:
+      - '5000:3000'
+    
