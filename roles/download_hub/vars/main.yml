@@ -5,7 +5,7 @@ jackett_torrent_blackhole: /media/download_hub/Downloads/jackett
 #OpenVPN and Transmission
 vpn_provider: TORGUARD
 download_hub: /media/download_hub
-transmission_local_network: "10.0.1.0/26,10.0.10.0/26,10.0.101.0/24,10.0.102.0/26,192.168.1.1/24,10.0.200.0/24"
+transmission_local_network: "10.0.1.0/26,10.0.10.0/26,10.0.101.0/24,10.0.102.0/26,192.168.1.1/24,10.0.200.0/24,172.16.2.0/27"
 
 #Soulseek
 soulseek: /docker/Soulseek
