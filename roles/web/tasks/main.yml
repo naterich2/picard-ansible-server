@@ -74,6 +74,9 @@
   docker_container: 
     name: nrichman.dev
     image: nrichman2/nrichman.dev
+    pull: true
     ports:
       - "8080:3000"
+    volumes:
+      - "/home/nrichman/web/nrichman.dev/public:/opt/nrichman.dev/public:ro"
     
