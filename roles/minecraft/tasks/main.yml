@@ -1,0 +1,25 @@
+
+- name: Create minecraft
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ minecraft }}"
+  become: yes
+
+#######################################################
+################### Minecraft #########################
+#######################################################
+- name: Minmecraft Docker Container
+  docker_container:
+    name: minecraft
+    image: bbriggs/bukkit:1.15.2
+    pull: true
+    ports:
+      - "25566:25565"
+    env:
+      EULA: 'true'
+    volumes:
+      - "{{ minecraft }}:/data:rw"
+    restart_policy: unless-stopped
+    memory: 4g
