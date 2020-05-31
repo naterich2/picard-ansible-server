@@ -79,4 +79,23 @@
       - "8080:3000"
     volumes:
       - "/home/nrichman/web/nrichman.dev/public:/opt/nrichman.dev/public:ro"
+- name: Heimdall config
+  file: 
+    path: "{{ heimdall }}"
+    state: directory
+    owner: nrichman
+    group: nrichman
+    mode: 0755
+
+- name: Heimdall Docker
+  docker_container: 
+    name: heimdall
+    image: linuxserver/heimdall
+    pull: true
+    restart_policy: unless-stopped
+    ports:
+      - "3013:80"
+      - "6013:443"
+    volumes:
+      - "/media/docker/heimdall:/config"
     
