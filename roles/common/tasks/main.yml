@@ -11,20 +11,38 @@
     owner: root
   become: yes
 
+- name: Make telegraf user and add to docker group
+  user: 
+    name: telegraf
+    group: docker
+    system: yes
+    create_home: no
+    state: present
+  register: user
+  become: yes
+
+#Workaround for https://github.com/pi-hole/docker-pi-hole/issues/230
+- name: Add hosts to /etc/hosts
+  lineinfile:
+    path: /etc/hosts
+    state: present
+    line: "10.0.1.7 data.nrichman.lan data"
+  become: yes
+
 - name: Telegraf docker
   docker_container:
     name: telegraf
     image: telegraf
     pull: true
+    user: "{{ user.uid }}:{{ user.group }}"
     volumes:
       - "{{ telegraf }}/telegraf.conf:/etc/telegraf/telegraf.conf:ro"
+      - "/etc/hosts:/etc/hosts"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
-    ports:
-      - "161:161"
         #restart_policy: 'unless-stopped'
     memory: 1g
     dns_servers:
-      - 10.0.1.6
+      - "{{ dns }}"
     cpu_period: 100000
-    cpu_quota: 25000
+    cpu_quota: 15000
 
