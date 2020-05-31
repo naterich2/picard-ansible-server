@@ -100,6 +100,17 @@
 - name: Include credentials
   include_vars:
     file: ../vars/credentials.yml
+
+- name: Make telegraf user and add to docker group
+  user: 
+    name: telegraf
+    group: docker
+    system: yes
+    create_home: no
+    state: present
+  register: user
+  become: yes
+
 - name: Login to Docker Repo
   docker_login:
     username: "{{ docker_login }}"
@@ -109,6 +120,7 @@
   docker_container:
     name: telegraf
     image: nrichman2/telegraf_snmp:armhf #telegraf-snmp hash so it's not pulled
+    user: "{{ user.uid }}:{{ user.group }}"
     volumes:
       - "{{ telegraf }}/telegraf.conf:/etc/telegraf/telegraf.conf:ro"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
