@@ -1,4 +1,34 @@
 ---
+- name: Create downloads group
+  group:
+    gid: 995
+    name: downloads
+    system: yes
+  become: yes
+
+- name: Create library group
+  group:
+    gid: 996
+    name: library
+    system: yes
+  become: yes
+
+- name: Create lidarr, radarr, sonarr, and jackett users 
+  user:
+    name: "{{ item.name }}"
+    uid: "{{ item.uid }}"
+    group: "{{ item.group }}"
+    groups: "{{ item.groups }}"
+    create_home: no
+    system: yes
+  with_items:
+    - { uid: "117", name: "lidarr", group: "995", groups: ["995"] }
+    - { uid: "116", name: "radarr", group: "996", groups: ["996","995"]}
+    - { uid: "125", name: "sonarr", group: "996", groups: ["996","995"]}
+    - { uid: "122", name: "jackett", group: "996", groups: ["996"]}
+    - { uid: "119", name: "transmission", group: "995", groups: ["995"]}
+  become: yes
+
 - name: Create Lidarr/Radarr/Sonarr/Jackett Directories
   file:
     path: "{{ item.path }}"
@@ -7,12 +37,14 @@
     group: library
     mode: 0775
   with_items:
-    - { path: "{{ download_hub }}/lidarr", owner: "lidarr" }
-    - { path: "{{ download_hub }}/radarr", owner: "radarr" }
-    - { path: "{{ download_hub }}/sonarr", owner: "sonarr" }
-    - { path: "{{ download_hub }}/sickbeard", owner: "nrichman" }
-    - { path: "{{ download_hub }}/sickbeard/radarr", owner: "radarr" }
-    - { path: "{{ download_hub }}/sickbeard/sonarr", owner: "sonarr" }
+    - { path: "{{ lidarr }}/config", owner: "lidarr" }
+    - { path: "{{ radarr }}/config", owner: "radarr" }
+    - { path: "{{ sonarr }}/config", owner: "sonarr" }
+    - { path: "{{ radarr }}/sickbeard", owner: "radarr" }
+    - { path: "{{ sonarr }}/sickbeard", owner: "sonarr" }
     - { path: "{{ jackett }}", owner: "jackett" }
     - { path: "{{ jackett_torrent_blackhole }}", owner: "jackett" }
+    - { path: "{{ transmission }}", owner: "transmission" }
+    - { path: "{{ transmission }}/watch", owner: "transmission" }
+    - { path: "{{ transmission }}/watch", owner: "transmission" }
   become: yes

@@ -1,0 +1,36 @@
+---
+# Inits
+#- name: ensure docker and nfs-common are installed
+#  apt:
+#    pkg:
+#      - docker.io
+#      - nfs-common
+#    state: present
+#  become: yes
+#
+#
+#- name: Create directories
+#  file:
+#    path: {{ item }}
+#    state: directory
+#    mode: '0755'
+#    owner: root
+#    group: root
+#  become: yes
+#  with_items:
+#    - "/media"
+#    - "{{ transmission_guest }}"
+#    - "{{ transmission_host }}"
+
+- name: Mount nfs
+  mount:
+    name: "{{ item.name }}"
+    src: "{{ item.src }}"
+    fstype: nfs
+    opts: defaults
+    state: mounted
+  become: yes
+  with_items:
+    - {name: "{{ library_guest }}", src: "sisko.nrichman.dev:{{ library_host }}"}
+    - {name: "{{ transmission_guest }}", src: "sisko.nrichman.dev:{{ transmission_host }}"}
+
