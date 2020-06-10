@@ -5,6 +5,8 @@
     name: downloads
     system: yes
   become: yes
+  tags:
+    - init
 
 - name: Create library group
   group:
@@ -12,6 +14,8 @@
     name: library
     system: yes
   become: yes
+  tags:
+    - init
 
 - name: Create lidarr, radarr, sonarr, and jackett users 
   user:
@@ -28,6 +32,8 @@
     - { uid: "122", name: "jackett", group: "996", groups: ["996"]}
     - { uid: "119", name: "transmission", group: "995", groups: ["995"]}
   become: yes
+  tags:
+    - init
 
 - name: Create Lidarr/Radarr/Sonarr/Jackett Directories
   file:
@@ -48,3 +54,5 @@
     - { path: "{{ transmission }}/watch", owner: "transmission" }
     - { path: "{{ transmission }}/watch", owner: "transmission" }
   become: yes
+  tags:
+    - init
