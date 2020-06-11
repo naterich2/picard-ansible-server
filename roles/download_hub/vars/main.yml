@@ -5,16 +5,11 @@ radarr: /docker/radarr
 sonarr: /docker/sonarr
 lidarr: /docker/lidarr
 transmission: /docker/transmission
+deezloader: /docker/deezloader
+soulseek: /docker/soulseek
 
 download_hub: /media/download_hub
 
-#Soulseek
-soulseek: /docker/Soulseek
-soulseek_downloads: /media/Soulseek
-
-#Deezloader
-deezloader_config: /docker/deezloader
-deezloader_downloads: /media/Deezloader
 
 #Radarr
 radarr_output: /movies
@@ -25,3 +20,7 @@ library_guest: /media/library
 library_host: /media/Library
 transmission_guest: /media/transmission
 transmission_host: /media/download_hub/Downloads/transmission
+soulseek_host: /media/Soulseek
+soulseek_client: /media/Soulseek
+deezloader_host: /media/Deezloader
+deezloader_client: /media/Deezloader

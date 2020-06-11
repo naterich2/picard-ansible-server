@@ -17,7 +17,7 @@
   tags:
     - init
 
-- name: Create lidarr, radarr, sonarr, and jackett users 
+- name: Create Users
   user:
     name: "{{ item.name }}"
     uid: "{{ item.uid }}"
@@ -31,6 +31,8 @@
     - { uid: "125", name: "sonarr", group: "996", groups: ["996","995"]}
     - { uid: "122", name: "jackett", group: "996", groups: ["996"]}
     - { uid: "119", name: "transmission", group: "995", groups: ["995"]}
+    - { uid: "120", name: "deezloader", group: "995", groups: ["995"]}
+    - { uid: "121", name: "soulseek", group: "995", groups: ["995"]}
   become: yes
   tags:
     - init
@@ -53,6 +55,8 @@
     - { path: "{{ transmission }}", owner: "transmission" }
     - { path: "{{ transmission }}/watch", owner: "transmission" }
     - { path: "{{ transmission }}/watch", owner: "transmission" }
+    - { path: "{{ deezloader }}", owner: "deezloader" }
+    - { path: "{{ soulseek }}", owner: "soulseek" }
   become: yes
   tags:
     - init

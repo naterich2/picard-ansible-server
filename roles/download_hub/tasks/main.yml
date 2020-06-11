@@ -185,7 +185,7 @@
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
       - "/etc/timezone:/etc/timezone:ro"
-      - "{{ transmission }}config:/config:rw"
+      - "{{ transmission }}/config:/config:rw"
       - "{{ transmission_guest }}:/storage/downloads:rw"
       - "{{ transmission }}/watch:/storage/watch"
     ports:
@@ -206,6 +206,30 @@
       PUID: "119"
       PGID: "995"
 
+  tags:
+    - run
+#######################################################
+#################### Deezloader #######################
+#######################################################
+- name: Deezloader Container
+  docker_container:
+    name: deezloader
+    image: bocki/deezloaderrmx
+    pull: true
+    volumes:
+      - "{{ deezloader_client }}:/downloads:rw"
+      - "{{ deezloader }}:/config:rw"
+    ports:
+      - "1730:1730"
+    networks:
+      - name: torrent
+        ipv4_address: "172.16.0.7"
+        aliases:
+          - "deezloader"
+    networks_cli_compatible: yes
+    env:
+      PUID: "120"
+      PGID: "995"
   tags:
     - run
 
