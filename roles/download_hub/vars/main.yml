@@ -16,11 +16,7 @@ radarr_output: /movies
 sonarr_output: /tv
 
 # File mounts
-library_guest: /media/library
-library_host: /media/Library
-transmission_guest: /media/transmission
-transmission_host: /media/download_hub/Downloads/transmission
-soulseek_host: /media/Soulseek
-soulseek_client: /media/Soulseek
-deezloader_host: /media/Deezloader
-deezloader_client: /media/Deezloader
+library: /media/Library
+transmission_downloads: /media/download_hub/Downloads/transmission
+soulseek_downloads: /media/Soulseek/Downloads
+deezloader_downloads: /media/Deezloader

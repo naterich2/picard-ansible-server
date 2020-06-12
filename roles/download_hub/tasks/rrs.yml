@@ -6,7 +6,7 @@
     system: yes
   become: yes
   tags:
-    - init
+    - start
 
 - name: Create library group
   group:
@@ -15,7 +15,7 @@
     system: yes
   become: yes
   tags:
-    - init
+    - start
 
 - name: Create Users
   user:
@@ -35,7 +35,7 @@
     - { uid: "121", name: "soulseek", group: "995", groups: ["995"]}
   become: yes
   tags:
-    - init
+    - start
 
 - name: Create Lidarr/Radarr/Sonarr/Jackett Directories
   file:
@@ -51,12 +51,15 @@
     - { path: "{{ radarr }}/sickbeard", owner: "radarr" }
     - { path: "{{ sonarr }}/sickbeard", owner: "sonarr" }
     - { path: "{{ jackett }}", owner: "jackett" }
-    - { path: "{{ jackett_torrent_blackhole }}", owner: "jackett" }
+    - { path: "{{ jackett }}/config", owner: "jackett" }
+    - { path: "{{ jackett }}/blackhole", owner: "jackett" }
     - { path: "{{ transmission }}", owner: "transmission" }
-    - { path: "{{ transmission }}/watch", owner: "transmission" }
+    - { path: "{{ transmission }}/config", owner: "transmission" }
     - { path: "{{ transmission }}/watch", owner: "transmission" }
     - { path: "{{ deezloader }}", owner: "deezloader" }
     - { path: "{{ soulseek }}", owner: "soulseek" }
+    - { path: "{{ soulseek }}/logs", owner: "soulseek" }
+    - { path: "{{ soulseek }}/appdata", owner: "soulseek" }
   become: yes
   tags:
-    - init
+    - start

@@ -1,5 +1,5 @@
 ---
- Inits
+# Inits
 - name: ensure docker and nfs-common are installed
   apt:
     pkg:
@@ -13,7 +13,7 @@
 
 - name: Create directories
   file:
-    path: {{ item }}
+    path: "{{ item }}"
     state: directory
     mode: '0755'
     owner: root
@@ -21,8 +21,10 @@
   become: yes
   with_items:
     - "/media"
-    - "{{ transmission_guest }}"
-    - "{{ transmission_host }}"
+    - "{{ library }}"
+    - "{{ transmission_downloads }}"
+    - "{{ deezloader_downloads }}"
+    - "{{ soulseek_downloads }}"
   tags:
     - init
 
@@ -35,8 +37,11 @@
     state: mounted
   become: yes
   with_items:
-    - {name: "{{ library_guest }}", src: "sisko.nrichman.dev:{{ library_host }}"}
-    - {name: "{{ transmission_guest }}", src: "sisko.nrichman.dev:{{ transmission_host }}"}
+    - {name: "{{ library }}", src: "sisko.nrichman.dev:{{ library }}"}
+    - {name: "{{ transmission_downloads }}", src: "sisko.nrichman.dev:{{ transmission_downloads }}"}
+    - {name: "{{ deezloader_downloads }}", src: "sisko.nrichman.dev:{{ deezloader_downloads }}"}
+    - {name: "{{ soulseek_downloads }}", src: "sisko.nrichman.dev:{{ soulseek_downloads }}"}
+  ignore_errors: yes
   tags:
     - run
 

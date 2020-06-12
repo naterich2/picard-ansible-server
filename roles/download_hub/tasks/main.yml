@@ -1,9 +1,6 @@
-
 - name: Include VPN credentials
-  tags:
-    - download_hub
   include_vars:
-    file: ../vars/credentials.yml
+    file: /etc/ansible/roles/download_hub/vars/credentials.yml
 
 - name: prepare tasks
   import_tasks: prepare.yml
@@ -16,10 +13,12 @@
     name: torrent
     driver: bridge
     driver_options:
-      com.docker.network.bridge.name: "docker0"
+      com.docker.network.bridge.name: "docker1"
     ipam_config:
       - subnet: 172.16.0.0/27
         gateway: 172.16.0.1
+    state: present
+    force: yes
   tags:
     - init
 
@@ -27,17 +26,14 @@
 ####################### Lidarr ########################
 #######################################################
 - name: Lidarr
-  tags:
-    - lidarr
-    - rrs
   docker_container:
     name: lidarr
     image: linuxserver/lidarr:latest
     pull: true
     volumes:
-      - "{{ download_hub }}/lidarr:/config"
-      - "{{ download_hub }}/Downloads/transmission/complete:/storage/downloads/complete"
-      - "{{ plex_library }}/Music:/music"
+      - "{{ lidarr }}/lidarr:/config"
+      - "{{ transmission_downloads }}/complete:/storage/downloads/complete"
+      - "{{ library }}/Music:/music"
     env:
       PUID: "117"
       PGID: "995"
@@ -49,6 +45,7 @@
         ipv4_address: "172.16.0.3"
         aliases:
           - "lidarr"
+    purge_networks: yes
     networks_cli_compatible: yes
     restart_policy: unless-stopped
     memory: 1g 
@@ -72,9 +69,6 @@
     - run
 
 - name: radarr container
-  tags:
-    - radarr
-    - rrs
   docker_container:
     name: radarr
     image: mdhiggins/radarr-sma:latest
@@ -88,14 +82,15 @@
         ipv4_address: "172.16.0.4"
         aliases:
           - "radarr"
+    purge_networks: yes
     networks_cli_compatible: yes
     env:
       TZ: "America/Chicago"
       PUID: "116"
       PGID: "996"
     volumes:
-      - "{{ library_guest }}/Movies:/movies"
-      - "{{ transmission_guest }}/complete:/downloads"
+      - "{{ library }}/Movies:/movies"
+      - "{{ transmission_downloads }}/complete:/downloads"
       - "{{ radarr }}/config:/config:rw"
       - "{{ radarr }}/sickbeard:/usr/local/sma/config"
     memory: 1g 
@@ -132,14 +127,15 @@
         ipv4_address: "172.16.0.5"
         aliases:
           - "sonarr"
+    purge_networks: yes
     networks_cli_compatible: yes
     env:
       TZ: "America/Chicago"
       PUID: "125"
       PGID: "996"
     volumes:
-      - "{{ library_guest }}/TV\ Shows:/tv"
-      - "{{ transmission_guest }}/complete:/downloads"
+      - "{{ library }}/TV\ Shows:/tv"
+      - "{{ transmission_downloads }}/complete:/downloads"
       - "{{ sonarr }}/config:/config:rw"
       - "{{ sonarr }}/sickbeard:/usr/local/sma/config"
     memory: 1g 
@@ -164,14 +160,15 @@
         ipv4_address: "172.16.0.2"
         aliases:
           - "jackett"
+    purge_networks: yes
     networks_cli_compatible: yes
     env:
       TZ: "America/Chicago"
       PUID: "1000"
       PGID: "996"
     volumes:
-      - "{{ jackett }}:/config"
-      - "{{ jackett_torrent_blackhole }}:/downloads"
+      - "{{ jackett }}/config:/config"
+      - "{{ jackett }}/blackhole:/downloads"
   tags:
     - run
 #######################################################
@@ -186,7 +183,7 @@
       - "/etc/localtime:/etc/localtime:ro"
       - "/etc/timezone:/etc/timezone:ro"
       - "{{ transmission }}/config:/config:rw"
-      - "{{ transmission_guest }}:/storage/downloads:rw"
+      - "{{ transmission_downloads }}:/storage/downloads:rw"
       - "{{ transmission }}/watch:/storage/watch"
     ports:
       - "9091:9091"
@@ -195,17 +192,17 @@
         ipv4_address: "172.16.0.6"
         aliases:
           - "transmission"
+    purge_networks: yes
     networks_cli_compatible: yes
     env:
-      TRANSMISSION_HOME: /config
-      TRANSMISSION_DOWNLOAD_DIR: /storage/downloads/complete
-      TRANSMISSION_INCOMPLETE_DIR: /storage/downloads/incomplete
-      TRANSMISSION_WATCH_DIR: /storage/watch
-      TRANSMISSION_RPC_USERNAME: "{{ transmission_username }}"
-      TRANSMISSION_RPC_PASSWORD: "{{ transmission_password }}"
+      TRANSMISSION_HOME: "/config"
+      TRANSMISSION_DOWNLOAD_DIR: "/storage/downloads/complete"
+      TRANSMISSION_INCOMPLETE_DIR: "/storage/downloads/incomplete"
+      TRANSMISSION_WATCH_DIR: "/storage/watch"
+      #      TRANSMISSION_RPC_USERNAME: "{{ transmission_username }}" 
+      #      TRANSMISSION_RPC_PASSWORD: "{{ transmission_password }}"
       PUID: "119"
       PGID: "995"
-
   tags:
     - run
 #######################################################
@@ -217,7 +214,7 @@
     image: bocki/deezloaderrmx
     pull: true
     volumes:
-      - "{{ deezloader_client }}:/downloads:rw"
+      - "{{ deezloader_downloads }}:/downloads:rw"
       - "{{ deezloader }}:/config:rw"
     ports:
       - "1730:1730"
@@ -226,6 +223,7 @@
         ipv4_address: "172.16.0.7"
         aliases:
           - "deezloader"
+    purge_networks: yes
     networks_cli_compatible: yes
     env:
       PUID: "120"
@@ -233,6 +231,34 @@
   tags:
     - run
 
+#######################################################
+##################### Soulseek ########################
+#######################################################
+- name: Soulseek Container
+  docker_container:
+    name: soulseek
+    image: realies/soulseek
+    pull: true
+    volumes:
+      - "{{ soulseek }}/appdata:/data/.SoulseekQt:rw"
+      - "{{ soulseek_downloads }}:/data/Soulseek Downloads:rw"
+      - "{{ soulseek }}/logs:/data/Soulseek Chat Logs:rw"
+    ports:
+      - "6080:6080"
+    networks:
+      - name: torrent
+        ipv4_address: "172.16.0.8"
+        aliases:
+          - "soulseek"
+    purge_networks: yes
+    networks_cli_compatible: yes
+    env:
+      PUID: "121"
+      PGID: "995"
+      resize: "scale"
+      resolution: "1280x720"
+  tags:
+    - run
 #- name: download_hub with VPN
 #  tags:
 #    - download_hub
