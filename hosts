@@ -44,25 +44,29 @@
 [all:vars]
 ansible_python_interpreter=/usr/bin/python3 
 
-[ubuntu]
-localhost ansible_connection=local
-
-[picard]
-localhost
-
-[raspbian]
-janeway.nrichman.lan
-data.nrichman.lan
-
-[raspbian:vars]
-ansible_ssh_user=pi
+[all]
+sisko.nrichman.dev    ansible_connection=local
+janeway.nrichman.dev  ansible_ssh_user=pi
+data.nrichman.dev     ansible_ssh_user=pi
+picard.nrichman.dev 
+odo.nrichman.dev
+quark.nrichman.dev
 
 [data_master]
-data.nrichman.lan
+data.nrichman.dev
 
 [data_slave]
-localhost
-janeway.nrichman.lan
+sisko.nrichman.dev
+janeway.nrichman.dev
+picard.nrichman.dev 
+odo.nrichman.dev
+quark.nrichman.dev
+
+[nginx_web]
+sisko.nrichman.dev
+data.nrichman.dev
+quark.nrichman.dev
+
 
 
 
