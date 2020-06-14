@@ -1,0 +1,5 @@
+keycloak_version: 10.0.2
+keycloak_dir: /usr/local/keycloak
+keycloak_home: "{{ keycloak_dir }}/keycloak-{{ keycloak_version }}"
+keycloak_url: "https://downloads.jboss.org/keycloak/{{ keycloak_version }}/keycloak-{{ keycloak_version }}.tar.gz"
+keycloak_log: "{{ keycloak_home }}/standalone/log"

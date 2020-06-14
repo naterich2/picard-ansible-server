@@ -2,41 +2,76 @@
   include_vars:
     file: ../vars/credentials.yml
 
-- name: Keycloak network
-  docker_network:
-    name: keycloak
-    driver: bridge
-    driver_options:
-      com.docker.network.bridge.name: 'docker5'
-    ipam_config:
-      - subnet: 172.16.101.0/28
-        gateway: 172.16.101.1
+- name: install keycloak prerequisites
+  yum: 
+    name: ["java",'firewalld'] 
+    state: present
+  when: init
 
-- name: Keycloak container
-  docker_container:
+- name: Keycloak user
+  user: 
     name: keycloak
-    image: jboss/keycloak
-    pull: true
-    ports:
-      - "3315:8080"
-    networks:
-      - name: main
-        ipv4_address: "172.16.100.6"
-        aliases:
-          - "keycloak"
-    networks_cli_compatible: yes
-    env:
-      KEYCLOAK_USER: '{{ keycloak_user }}'
-      KEYCLOAK_PASSWORD: '{{ keycloak_passwd }}'
-      PROXY_ADDRESS_FORWARDING: 'true'
-      DB_VENDOR: 'mariadb'
-      DB_ADDR: '10.0.1.5'
-      DB_USER: 'keycloak'
-      DB_DATABASE: 'keycloak'
-      DB_PASSWORD: '{{ mariadb_passwd }}'
-      KEYCLOAK_LOGLEVEL: 'DEBUG'
-    memory: 1g 
-    cpu_period: 100000
-    cpu_quota: 90000
+  when: init or start
 
+- name: keycloak target directory
+  file: 
+    dest: "{{ keycloak_dir }}"
+    mode: 0755
+    owner: root
+    group: root
+    state: directory
+  when: init
+
+- name: get Keycloak distribution tarball
+  get_url: 
+    url: "{{ keycloak_url }}"
+    dest: "{{ keycloak_dir }}"
+  when: init
+
+- name: unpack keycloak
+  unarchive: 
+    src: "{{ keycloak_dir }}/keycloak-{{ keycloak_version }}.tar.gz"
+    dest: "{{ keycloak_dir }}"
+    copy: no
+  when: init
+
+
+- name: keycloak data directory
+  file: 
+    dest: "{{ keycloak_home }}/standalone"
+    mode: 0775
+    owner: keycloak
+    group: keycloak
+    state: directory
+    recurse: yes
+  when: init or start
+
+
+- name: keycloak systemd setup
+  template:
+    owner: root 
+    group: root 
+    mode: 0644
+    src: keycloak.service.j2
+    dest: /etc/systemd/system/keycloak.service
+  notify:
+    - reload systemd
+  when: init or start
+
+- name: Open Firewall for services
+  firewalld: 
+    port: "{{ item }}"
+    permanent: true
+    state: enabled
+    immediate: yes
+  with_items:
+    - 8080/tcp
+    - 9990/tcp
+  when: init or start
+
+- name: keycloak systemd service enable and start
+  service: 
+    name: keycloak
+    enabled: yes
+    state: started
 

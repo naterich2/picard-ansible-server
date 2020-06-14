@@ -1,0 +1,15 @@
+[Unit]
+Description=Keycloak Server
+After=network.target
+ 
+[Service]
+Type=idle
+Environment=JBOSS_HOME={{ keycloak_home }} JBOSS_LOG_DIR={{ keycloak_log }} "JAVA_OPTS=-Xms1024m -Xmx4069m -XX:MaxPermSize=768m" KEYCLOAK_USER="{{ keycloak_user }}" KEYCLOAK_PASSWORD: "{{ keycloak_passwd }}"
+User=keycloak
+Group=keycloak
+ExecStart={{ keycloak_home }}/bin/standalone.sh -b 0.0.0.0
+TimeoutStartSec=600
+TimeoutStopSec=600
+
+[Install]
+WantedBy=multi-user.target
