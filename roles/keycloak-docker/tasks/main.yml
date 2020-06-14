@@ -1,0 +1,62 @@
+- name: Include VPN credentials
+  include_vars:
+    file: ../vars/credentials.yml
+
+- name: Keycloak network
+  docker_network:
+    name: keycloak
+    driver: bridge
+    driver_options:
+      com.docker.network.bridge.name: 'docker5'
+    ipam_config:
+      - subnet: 172.16.101.0/28
+        gateway: 172.16.101.1
+  tags:
+    - docker
+
+- name: Keycloak container
+  docker_container:
+    name: keycloak
+    image: jboss/keycloak
+    pull: true
+    ports:
+      - "3315:8080"
+    networks:
+      - name: main
+        ipv4_address: "172.16.100.6"
+        aliases:
+          - "keycloak"
+    networks_cli_compatible: yes
+    env:
+      KEYCLOAK_USER: '{{ keycloak_user }}'
+      KEYCLOAK_PASSWORD: '{{ keycloak_passwd }}'
+      PROXY_ADDRESS_FORWARDING: 'true'
+      DB_VENDOR: 'mariadb'
+      DB_ADDR: '10.0.1.5'
+      DB_USER: 'keycloak'
+      DB_DATABASE: 'keycloak'
+      DB_PASSWORD: '{{ mariadb_passwd }}'
+      KEYCLOAK_LOGLEVEL: 'DEBUG'
+    memory: 1g 
+    cpu_period: 100000
+    cpu_quota: 90000
+  tags:
+    - docker
+
+
+- name: Keycloak user
+  user: 
+    name: keycloak
+  tags:
+  - keycloak
+
+- name: keycloak target directory
+  tags:
+  - keycloak
+  file: dest={{ keycloak_dir }}
+        mode=755
+        owner=root
+        group=root
+        state=directory
+
+
