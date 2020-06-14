@@ -20,3 +20,7 @@ library: /media/Library
 transmission_downloads: /media/download_hub/Downloads/transmission
 soulseek_downloads: /media/Soulseek/Downloads
 deezloader_downloads: /media/Deezloader
+
+extra_hosts: 
+  transmission.nrichman.dev: 10.0.9.2
+  dashboard.nrichman.dev: 10.0.9.2

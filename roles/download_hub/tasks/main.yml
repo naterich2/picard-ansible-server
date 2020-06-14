@@ -34,6 +34,7 @@
       - "{{ lidarr }}/lidarr:/config"
       - "{{ transmission_downloads }}/complete:/storage/downloads/complete"
       - "{{ library }}/Music:/music"
+    etc_hosts: "{{ extra_hosts }}"
     env:
       PUID: "117"
       PGID: "995"
@@ -84,6 +85,7 @@
           - "radarr"
     purge_networks: yes
     networks_cli_compatible: yes
+    etc_hosts: "{{ extra_hosts }}"
     env:
       TZ: "America/Chicago"
       PUID: "116"
@@ -128,6 +130,7 @@
         aliases:
           - "sonarr"
     purge_networks: yes
+    etc_hosts: "{{ extra_hosts }}"
     networks_cli_compatible: yes
     env:
       TZ: "America/Chicago"
@@ -161,6 +164,7 @@
         aliases:
           - "jackett"
     purge_networks: yes
+    etc_hosts: "{{ extra_hosts }}"
     networks_cli_compatible: yes
     env:
       TZ: "America/Chicago"
@@ -187,6 +191,7 @@
       - "{{ transmission }}/watch:/storage/watch"
     ports:
       - "9091:9091"
+    etc_hosts: "{{ extra_hosts }}"
     networks:
       - name: torrent
         ipv4_address: "172.16.0.6"
@@ -216,6 +221,7 @@
     volumes:
       - "{{ deezloader_downloads }}:/downloads:rw"
       - "{{ deezloader }}:/config:rw"
+    etc_hosts: "{{ extra_hosts }}"
     ports:
       - "1730:1730"
     networks:
@@ -243,6 +249,7 @@
       - "{{ soulseek }}/appdata:/data/.SoulseekQt:rw"
       - "{{ soulseek_downloads }}:/data/Soulseek Downloads:rw"
       - "{{ soulseek }}/logs:/data/Soulseek Chat Logs:rw"
+    etc_hosts: "{{ extra_hosts }}"
     ports:
       - "6080:6080"
     networks:
