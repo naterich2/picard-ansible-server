@@ -1,5 +1,9 @@
 ---
 # Start Keycloak
-- hosts: picard
+- hosts: tuvok.nrichman.dev
   roles:
     - keycloak
+  become: yes
+  vars:
+    init: false
+    start: false
