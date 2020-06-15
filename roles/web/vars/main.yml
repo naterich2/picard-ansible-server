@@ -1,37 +1,17 @@
-#			            _      _                             _             
-#			 _ __  _ __(_) ___| |__  _ __ ___   __ _ _ __   | | __ _ _ __  
-#			| '_ \| '__| |/ __| '_ \| '_ ` _ \ / _` | '_ \  | |/ _` | '_ \ 
-#			| | | | |  | | (__| | | | | | | | | (_| | | | |_| | (_| | | | |
-#			|_| |_|_|  |_|\___|_| |_|_| |_| |_|\__,_|_| |_(_)_|\__,_|_| |_|
-#                                                               
-
-#General                                           
-docker: /docker
-timezone: America/Chicago
-influxdb_name: 10.0.1.7
-
-#Plex config
-plex_config: /docker/plex
-plex_library: /media/Library
+#			 _________________________________________
+#			/ Welcome to the Web role, this role      \
+#			| controls all the web servers (nginx) I  |
+#			\ run for exposing services on subdomains /
+#			 -----------------------------------------
+#			        \   ^__^
+#			         \  (oo)\_______
+#			            (__)\       )\/\
+#			                ||----w |
+#			                ||     ||
 
 
-#Gitlab
-gitlab: /docker/gitlab
-gitlab_data: /media/gitlab
-gitea: /media/gitea
+# Dictionary of hosts and services
+keycloak_host: tuvok.nrichman.dev
+main_web_host: sisko.nrichman.dev
+dashboard_host: sisko.nrichman.dev
 
-#Radius
-freeradius: /docker/freeradius
-
-#Organizr
-organizr: /docker/Organizr
-
-#Mariadb
-mariadb: /var/lib/mysql
-
-#Nextcloud
-nextcloud: /media/nextcloud
-nextcloud_admin: admin
-
-#Heimdall
-heimdall: /media/heimdall

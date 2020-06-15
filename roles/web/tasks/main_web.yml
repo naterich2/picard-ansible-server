@@ -1,40 +1,11 @@
 
-######################################################################################
-#                                 Docker Networks                                    #
-######################################################################################
-- name: Docker main network
-  tags:
-    - networks
-  docker_network:
-    name: main
-    driver: bridge
-    driver_options:
-      com.docker.network.bridge.name: "docker1"
-    ipam_config:
-      - subnet: 172.16.100.0/26
-        gateway: 172.16.100.1
-
-
-- name: Docker nginx isolation network
-  tags:
-    - networks
-    - nginx
-  docker_network:
-    name: nginx
-    driver: bridge
-    driver_options: 
-      com.docker.network.bridge.name: "docker4"
-    ipam_config:
-      - subnet: 172.16.200.0/28
-        gateway: 172.16.200.1
-      
 
 ######################################################################################
-#                                 Docker Containers                                  #
+#                                Main Web Services                                   #
 ######################################################################################
 #
-#
-#
+# This playbook has roles for the main web services, it contains the main nginx
+# configuration as well as my website.
 #
 #######################################################
 ###################### NGINX ##########################
@@ -57,12 +28,6 @@
     ports:
       - "80:80"
       - "443:443"
-    networks:
-      - name: nginx
-        ipv4_address: "172.16.200.2"
-        aliases:
-          - "nginx"
-    networks_cli_compatible: yes
     restart_policy: unless-stopped
     memory: 1g
     cpu_period: 100000
@@ -79,23 +44,3 @@
       - "8080:3000"
     volumes:
       - "/home/nrichman/web/nrichman.dev/public:/opt/nrichman.dev/public:ro"
-- name: Heimdall config
-  file: 
-    path: "{{ heimdall }}"
-    state: directory
-    owner: nrichman
-    group: nrichman
-    mode: 0755
-
-- name: Heimdall Docker
-  docker_container: 
-    name: heimdall
-    image: linuxserver/heimdall
-    pull: true
-    restart_policy: unless-stopped
-    ports:
-      - "3013:80"
-      - "6013:443"
-    volumes:
-      - "/media/docker/heimdall:/config"
-    

@@ -1,0 +1,14 @@
+
+##################### Install/Update NGINX ###################
+- name: Install nginx  Ubuntu
+  apt:
+    name: nginx
+    state: latest
+  when: "ansible_distribution|string == 'Ubuntu'"
+
+- name: Install nginx CentOS
+  dnf:
+    name: nginx
+    state: latest
+  when: "ansible_distribution|string == 'CentOS'"
+  

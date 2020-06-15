@@ -1,0 +1,9 @@
+- name: Allow nginx on CentOS
+  firewalld:
+    zone: public
+    service: "{{ services }}"
+  loop:
+    - http
+    - https
+  when: "ansible_distribution|string == 'CentOS'"
+
