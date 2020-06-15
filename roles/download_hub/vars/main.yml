@@ -1,25 +1,27 @@
-#Jackett, Radarr, Sonarr, Lidarr, transmission
-jackett: /docker/Jackett
-jackett_torrent_blackhole: /media/download_hub/Downloads/jackett
-radarr: /docker/radarr
-sonarr: /docker/sonarr
-lidarr: /docker/lidarr
-transmission: /docker/transmission
-deezloader: /docker/deezloader
-soulseek: /docker/soulseek
 
-download_hub: /media/download_hub
+config: /media/docker
+library: /media/Library
+downloads: /media/download_hub/Downloads
 
+#Config dirs
+jackett: "{{ config }}"/jackett
+radarr: "{{ config }}"/radarr
+sonarr: "{{ config }}"/sonarr
+lidarr: "{{ config }}"/lidarr
+transmission: "{{ config }}"/transmission
+deezloader: "{{ config }}"/deezloader
+soulseek: "{{ config }}"/soulseek
 
-#Radarr
+#Outputs for radarr, sonarr, lidarr
 radarr_output: /movies
 sonarr_output: /tv
 
 # File mounts
-library: /media/Library
-transmission_downloads: /media/download_hub/Downloads/transmission
-soulseek_downloads: /media/Soulseek/Downloads
-deezloader_downloads: /media/Deezloader
+jackett_torrent_blackhole: "{{ downloads }}"/jackett
+transmission_downloads: "{{ downloads }}"/transmission
+transmission_watch:  "{{ downloads }}"/transmission_watch
+soulseek_downloads: "{{ downloads }}"/soulseek/Downloads
+deezloader_downloads: "{{ downloads }}"/deezloader
 
 extra_hosts: 
   transmission.nrichman.dev: 10.0.9.2

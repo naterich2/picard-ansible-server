@@ -2,25 +2,23 @@
   include_vars:
     file: /etc/ansible/roles/download_hub/vars/credentials.yml
 
-- name: prepare tasks
-  import_tasks: prepare.yml
-
 - name: sonarr/radarr/lidarr/jackett tasks
   import_tasks: rrs.yml
+  when: start or init
 
 - name: docker torrent network
   docker_network:
     name: torrent
-    driver: bridge
+    driver: macvlan
     driver_options:
-      com.docker.network.bridge.name: "docker1"
+      com.docker.network.bridge.name: "docker2"
+      parent: vlan99@enp2s0
     ipam_config:
       - subnet: 172.16.0.0/27
         gateway: 172.16.0.1
     state: present
     force: yes
-  tags:
-    - init
+  when: init
 
 #######################################################
 ####################### Lidarr ########################
@@ -31,7 +29,7 @@
     image: linuxserver/lidarr:latest
     pull: true
     volumes:
-      - "{{ lidarr }}/lidarr:/config"
+      - "{{ lidarr }}:/config"
       - "{{ transmission_downloads }}/complete:/storage/downloads/complete"
       - "{{ library }}/Music:/music"
     etc_hosts: "{{ extra_hosts }}"
@@ -52,8 +50,6 @@
     memory: 1g 
     cpu_period: 100000
     cpu_quota: 30000
-  tags:
-    - run
 #######################################################
 ####################### Radarr ########################
 #######################################################
@@ -66,8 +62,6 @@
   vars:
     output: "{{radarr_output}}"
   become: yes
-  tags:
-    - run
 
 - name: radarr container
   docker_container:
@@ -93,13 +87,11 @@
     volumes:
       - "{{ library }}/Movies:/movies"
       - "{{ transmission_downloads }}/complete:/downloads"
-      - "{{ radarr }}/config:/config:rw"
+      - "{{ radarr }}:/config:rw"
       - "{{ radarr }}/sickbeard:/usr/local/sma/config"
     memory: 1g 
     cpu_period: 100000
     cpu_quota: 30000
-  tags:
-    - run
 #######################################################
 ####################### Sonarr ########################
 #######################################################
@@ -112,8 +104,6 @@
   vars:
     output: "{{sonarr_output}}"
   become: yes
-  tags:
-    - run
 
 - name: sonarr container
   docker_container:
@@ -139,13 +129,11 @@
     volumes:
       - "{{ library }}/TV\ Shows:/tv"
       - "{{ transmission_downloads }}/complete:/downloads"
-      - "{{ sonarr }}/config:/config:rw"
+      - "{{ sonarr }}:/config:rw"
       - "{{ sonarr }}/sickbeard:/usr/local/sma/config"
     memory: 1g 
     cpu_period: 100000
     cpu_quota: 30000
-  tags:
-    - run
 #######################################################
 ###################### Jackett ########################
 #######################################################
@@ -171,10 +159,8 @@
       PUID: "1000"
       PGID: "996"
     volumes:
-      - "{{ jackett }}/config:/config"
-      - "{{ jackett }}/blackhole:/downloads"
-  tags:
-    - run
+      - "{{ jackett }}:/config"
+      - "{{ jackett_torrent_blackhole }}:/downloads"
 #######################################################
 ################### Transmission ######################
 #######################################################
@@ -186,9 +172,9 @@
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
       - "/etc/timezone:/etc/timezone:ro"
-      - "{{ transmission }}/config:/config:rw"
+      - "{{ transmission }}:/config:rw"
       - "{{ transmission_downloads }}:/storage/downloads:rw"
-      - "{{ transmission }}/watch:/storage/watch"
+      - "{{ transmission_watch }}:/storage/watch"
     ports:
       - "9091:9091"
     etc_hosts: "{{ extra_hosts }}"
@@ -208,8 +194,6 @@
       #      TRANSMISSION_RPC_PASSWORD: "{{ transmission_password }}"
       PUID: "119"
       PGID: "995"
-  tags:
-    - run
 #######################################################
 #################### Deezloader #######################
 #######################################################
@@ -234,9 +218,6 @@
     env:
       PUID: "120"
       PGID: "995"
-  tags:
-    - run
-
 #######################################################
 ##################### Soulseek ########################
 #######################################################
@@ -264,8 +245,6 @@
       PGID: "995"
       resize: "scale"
       resolution: "1280x720"
-  tags:
-    - run
 #- name: download_hub with VPN
 #  tags:
 #    - download_hub

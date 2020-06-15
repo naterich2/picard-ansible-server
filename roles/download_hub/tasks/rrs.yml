@@ -1,21 +1,13 @@
 ---
 - name: Create downloads group
   group:
-    gid: 995
-    name: downloads
+    gid: "{{ item.gid }}"
+    name: "{{ item.name }}"
     system: yes
   become: yes
-  tags:
-    - start
-
-- name: Create library group
-  group:
-    gid: 996
-    name: library
-    system: yes
-  become: yes
-  tags:
-    - start
+  loop:
+    - {gid: 995, name: downloads}
+    - {gid: 996, name: library}
 
 - name: Create Users
   user:
@@ -34,32 +26,25 @@
     - { uid: "120", name: "deezloader", group: "995", groups: ["995"]}
     - { uid: "121", name: "soulseek", group: "995", groups: ["995"]}
   become: yes
-  tags:
-    - start
 
-- name: Create Lidarr/Radarr/Sonarr/Jackett Directories
+- name: Create Lidarr/Radarr/Sonarr/Jackett Config directories
   file:
     path: "{{ item.path }}"
     state: directory
-    owner: "{{item.owner}}"
-    group: library
+    owner: "{{ item.owner }}"
+    group: "{{ itme.group }}"
     mode: 0775
-  with_items:
-    - { path: "{{ lidarr }}/config", owner: "lidarr" }
-    - { path: "{{ radarr }}/config", owner: "radarr" }
-    - { path: "{{ sonarr }}/config", owner: "sonarr" }
-    - { path: "{{ radarr }}/sickbeard", owner: "radarr" }
-    - { path: "{{ sonarr }}/sickbeard", owner: "sonarr" }
-    - { path: "{{ jackett }}", owner: "jackett" }
-    - { path: "{{ jackett }}/config", owner: "jackett" }
-    - { path: "{{ jackett }}/blackhole", owner: "jackett" }
-    - { path: "{{ transmission }}", owner: "transmission" }
-    - { path: "{{ transmission }}/config", owner: "transmission" }
-    - { path: "{{ transmission }}/watch", owner: "transmission" }
-    - { path: "{{ deezloader }}", owner: "deezloader" }
-    - { path: "{{ soulseek }}", owner: "soulseek" }
-    - { path: "{{ soulseek }}/logs", owner: "soulseek" }
-    - { path: "{{ soulseek }}/appdata", owner: "soulseek" }
+  loop:
+    - { path: "{{ lidarr }}",           owner: "lidarr",        group: "downloads" }
+    - { path: "{{ radarr }}",           owner: "radarr",        group: "library" }
+    - { path: "{{ sonarr }}",           owner: "sonarr",        group: "library" }
+    - { path: "{{ radarr }}/sickbeard", owner: "radarr",        group: "library" }
+    - { path: "{{ sonarr }}/sickbeard", owner: "sonarr",        group: "library" }
+    - { path: "{{ jackett }}",          owner: "jackett",       group: "downloads" }
+    - { path: "{{ jackett }}",          owner: "jackett",       group: "downloads" }
+    - { path: "{{ transmission }}",     owner: "transmission",  group: "downloads"  }
+    - { path: "{{ deezloader }}",       owner: "deezloader",    group: "downloads"  }
+    - { path: "{{ soulseek }}",         owner: "soulseek",      group: "downloads"  }
+    - { path: "{{ soulseek }}/logs",    owner: "soulseek",      group: "downloads" }
+    - { path: "{{ soulseek }}/appdata", owner: "soulseek",      group: "downloads" }
   become: yes
-  tags:
-    - start
