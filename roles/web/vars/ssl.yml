@@ -1,0 +1,8 @@
+#nrichman.dev main
+main_ssl: /etc/ssl/nrichman.dev/nrichman.dev.pem
+main_ssl_key: /etc/ssl/nrichman.dev/nrichman.dev.key
+
+#dashboard.nrichman.dev
+dashboard_ssl: /etc/ssl/nrichman.dev/dashboard.nrichman.dev.pem
+dashboard_ssl_key: /etc/ssl/nrichman.dev/dashboard.nrichman.dev.key
+

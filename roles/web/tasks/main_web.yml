@@ -10,6 +10,22 @@
 #######################################################
 ###################### NGINX ##########################
 #######################################################
+- name: template main nginx
+  template:
+    src: ../templates/nrichman.dev.j2
+    dest: /etc/nginx/sites-enabled/nrichman.dev
+    owner: root
+    group: www-data
+    mode: '0664'
+
+- name: template dashboard nginx
+  template:
+    src: ../templates/dashboard.nrichman.dev.j2
+    dest: /etc/nginx/sites-enabled/dashboard.nrichman.dev
+    owner: root
+    group: www-data
+    mode: '0664'
+
 - name: NGINX Docker Container
   tags:
     - nginx
@@ -20,7 +36,8 @@
     volumes:
       - "/var/www/html:/var/www/html:ro"
       - "/etc/nginx/nginx.conf:/etc/nginx/nginx.conf"
-      - "/etc/nginx/sites-enabled/:/etc/nginx/sites-enabled/"
+      - "/etc/nginx/sites-enabled:/etc/nginx/sites-enabled"
+      - "/etc/nginx/sites-available:/etc/nginx/sites-available"
         #- "/etc/nginx/modules-enabled-docker:/etc/nginx/modules-enabled"
       - "/etc/ssl/nrichman.dev:/etc/ssl/nrichman.dev:ro"
         #- "/usr/share/nginx/modules:/etc/nginx/modules:ro"

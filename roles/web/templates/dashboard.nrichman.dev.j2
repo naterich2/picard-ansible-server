@@ -1,0 +1,154 @@
+##
+# You should look at the following URL's in order to grasp a solid understanding
+# of Nginx configuration files in order to fully unleash the power of Nginx.
+# https://www.nginx.com/resources/wiki/start/
+# https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/
+# https://wiki.debian.org/Nginx/DirectoryStructure
+#
+# In most cases, administrators will remove this file from sites-enabled/ and
+# leave it as reference inside of sites-available where it will continue to be
+# updated by the nginx packaging team.
+#
+# This file will automatically load configuration files provided by other
+# applications, such as Drupal or Wordpress. These applications will be made
+# available underneath a path with that package name, such as /drupal8.
+#
+# Please see /usr/share/doc/nginx-doc/examples/ for more detailed examples.
+##
+
+# Default server configuration
+#
+
+upstream jackett {
+    	server 10.0.9.2:9117;
+}
+upstream lidarr {
+	server 10.0.9.3:8686;
+}
+upstream radarr {
+ 	server 10.0.9.4:7878;
+}
+upstream sonarr {
+    	server 10.0.9.5:8989;
+}
+upstream transmission {
+    	server 10.0.9.6:9091;
+}
+upstream deezloader {
+    	server 10.0.9.7:1730;
+}
+upstream soulseek {
+    	server 10.0.9.8:6080;
+}
+server {
+	listen 80;
+	listen [::]:80;
+	server_name dashboard.nrichman.dev transmission.nrichman.dev;
+
+	#  For now, only allow lan and clients subnet
+	allow 10.0.1.0/26;
+	allow 10.0.9.0/28;
+	allow 10.0.101.0/24;
+	# drop rest of the world 
+	deny    all;
+
+	return 301 https://$server_name$request_uri;
+}
+server {
+	access_log /var/log/nginx/dashboard.nrichman.dev.log main;
+	listen 443 ssl http2;
+	listen [::]:443 ssl http2;
+
+	server_name dashboard.nrichman.dev;
+	
+    	ssl_certificate {{ dashboard_ssl }};
+    	ssl_certificate_key {{ dashboard_ssl_key }};
+	#  For now, only allow lan and clients subnet
+	allow 10.0.1.0/26;
+	allow 10.0.9.0/28;
+	allow 10.0.101.0/24;
+	# drop rest of the world 
+	deny    all;
+
+	location /lidarr/ {
+		proxy_set_header    Host              $host;
+		proxy_set_header    X-Real-IP         $remote_addr;
+		proxy_set_header    X-Forwarded-For   $proxy_add_x_forwarded_for;
+		proxy_set_header    X-Forwarded-Proto $scheme;
+		proxy_pass          http://lidarr/;
+		proxy_read_timeout  90;
+		proxy_redirect      off;
+	} 
+	location /radarr/ {
+		proxy_set_header    Host              $host;
+		proxy_set_header    X-Real-IP         $remote_addr;
+		proxy_set_header    X-Forwarded-For   $proxy_add_x_forwarded_for;
+		proxy_set_header    X-Forwarded-Proto $scheme;
+		proxy_pass          http://radarr/;
+		proxy_read_timeout  90;
+		proxy_redirect      off;
+	} 
+	location /sonarr/ {
+		proxy_set_header    Host              $host;
+		proxy_set_header    X-Real-IP         $remote_addr;
+		proxy_set_header    X-Forwarded-For   $proxy_add_x_forwarded_for;
+		proxy_set_header    X-Forwarded-Proto $scheme;
+		proxy_pass          http://sonarr/;
+		proxy_read_timeout  90;
+		proxy_redirect      off;
+	} 
+	location /jackett/ {
+		proxy_set_header    Host              $host;
+		proxy_set_header    X-Real-IP         $remote_addr;
+		proxy_set_header    X-Forwarded-For   $proxy_add_x_forwarded_for;
+		proxy_set_header    X-Forwarded-Proto $scheme;
+		proxy_pass          http://jackett/;
+		proxy_read_timeout  90;
+		proxy_redirect      off;
+	} 
+	location /soulseek/ {
+		proxy_set_header    Host              $host;
+		proxy_set_header    X-Real-IP         $remote_addr;
+		proxy_set_header    X-Forwarded-For   $proxy_add_x_forwarded_for;
+		proxy_set_header    X-Forwarded-Proto $scheme;
+		proxy_pass          http://soulseek/;
+		proxy_read_timeout  90;
+		proxy_redirect      off;
+	} 
+	location /deezloader/ {
+		proxy_set_header    Host              $host;
+		proxy_set_header    X-Real-IP         $remote_addr;
+		proxy_set_header    X-Forwarded-For   $proxy_add_x_forwarded_for;
+		proxy_set_header    X-Forwarded-Proto $scheme;
+		proxy_pass          http://deezloader/;
+		proxy_read_timeout  90;
+		proxy_redirect      off;
+	} 
+}
+server {
+	access_log /var/log/nginx/transmission.nrichman.dev.log main;
+	listen 443 ssl http2;
+	listen [::]:443 ssl http2;
+
+	server_name transmission.nrichman.dev;
+
+    	ssl_certificate {{ dashboard_ssl }};
+    	ssl_certificate_key {{ dashboard_ssl_key }};
+
+	#  For now, only allow lan and clients subnet
+	allow 10.0.1.0/26;
+	allow 10.0.9.0/28;
+	allow 10.0.101.0/24;
+	# drop rest of the world 
+	deny    all;
+
+    	location / {
+		proxy_set_header    Host              $host;
+		proxy_set_header    X-Real-IP         $remote_addr;
+		proxy_set_header    X-Forwarded-For   $proxy_add_x_forwarded_for;
+		proxy_set_header    X-Forwarded-Proto $scheme;
+        	proxy_pass          http://transmission;
+		proxy_read_timeout  90;
+		proxy_redirect      off;
+	}
+}
