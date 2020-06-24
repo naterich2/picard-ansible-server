@@ -1,0 +1,29 @@
+- name: Create homer user
+  user:
+    name: "{{ homer_user }}"
+    uid: " {{ homer_uid }}"
+    create_home: no
+    system: yes
+
+- name: Create config dirs
+  file:
+    path: "{{ homer }}/assets"
+    state: directory
+    mode: 0755
+    owner: homer
+    group: nrichman
+    recursive: yes
+
+- name: Homer docker container
+  docker_container:
+    name: homer
+    image: b4bz/homer:latest
+    pull: true
+    ports: 
+      - "9001:8080"
+    volumes:
+      - "{{ homer }}:/www:rw"
+    memory: 1g
+    cpu_period: 100000
+    cpu_quota: 10000
+

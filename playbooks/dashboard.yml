@@ -1,0 +1,7 @@
+
+---
+
+- hosts: sisko.nrichman.dev
+  roles:
+    - dashboard
+  become: yes
