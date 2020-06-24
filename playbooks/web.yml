@@ -2,6 +2,7 @@
 ---
 
 # Start web servers/services
-- hosts: picard
+- hosts: sisko.nrichman.dev
   roles:
     - web
+  become: yes
