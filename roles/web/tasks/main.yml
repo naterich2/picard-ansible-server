@@ -1,5 +1,8 @@
 - name: import ssl variables
   include_vars: ../vars/ssl.yml
 
+- name: import services variables
+  include_vars: ../vars/services.yml
+
 - name: main_web tasks
   import_tasks: main_web.yml

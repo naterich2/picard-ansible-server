@@ -40,6 +40,9 @@ upstream deezloader {
 upstream soulseek {
     	server 10.0.9.8:6080;
 }
+upstream homer {
+      server {{ homer_addr }}:{{ homer_port }};
+}
 server {
 	listen 80;
 	listen [::]:80;
@@ -69,6 +72,16 @@ server {
 	allow 10.0.101.0/24;
 	# drop rest of the world 
 	deny    all;
+
+	location / {
+		proxy_set_header    Host              $host;
+		proxy_set_header    X-Real-IP         $remote_addr;
+		proxy_set_header    X-Forwarded-For   $proxy_add_x_forwarded_for;
+		proxy_set_header    X-Forwarded-Proto $scheme;
+		proxy_pass          http://homer;
+		proxy_read_timeout  90;
+		proxy_redirect      off;
+	} 
 
 	location /lidarr/ {
 		proxy_set_header    Host              $host;
