@@ -6,3 +6,27 @@
   with_items:
     - "{{ plex_config }}"
 
+- name:
+  user: Create airsonic user
+    name: "{{ airsonic_user }}"
+    uid: "{{ airsonic_uid }}"
+
+- name: Create airsonic directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - "{{ airsonic_config }}"
+    - "{{ airsonic_config }}/data"
+    - "{{ airsonic_config }}/playlists"
+    - "{{ airsonic_config }}/podcasts"
+
+- name: Grant airsonic user access to music database
+  acl:
+    path: "{{ plex_library }}/Music"
+    entity: "{{ airsonic_user }}"
+    etype: user
+    permissions: r
+    recursive: yes
+    state: present
+

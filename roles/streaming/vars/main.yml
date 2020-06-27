@@ -1,3 +1,10 @@
 #Plex config
 plex_config: /docker/plex
 plex_library: /media/Library
+
+airsonic_config: /docker/airsonic
+airsonic_user: "airsonic"
+airsonic_uid: 151
+
+
+

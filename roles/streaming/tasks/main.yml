@@ -1,14 +1,12 @@
 
-- name: plex tasks
-  import_tasks: plex.yml
-  tags: plex
+- name: prepare tasks
+  import_tasks: prepare.yml
+  when: init
 
 #######################################################
 ###################### Plex ###########################
 #######################################################
 - name: plex Docker Container
-  tags:
-    - plex
   docker_container:
     name: plex
     image: linuxserver/plex
@@ -29,3 +27,24 @@
     memory: 1g
     cpu_period: 100000
     cpu_quota: 100000
+
+#######################################################
+#################### Airsonic #########################
+#######################################################
+- name: Airsonic Docker Container
+  docker_container:
+    name: airsonic
+    image: airsonic/airsonic
+    pull: true
+    volumes:
+      - "{{ airsonic_config }}/data:/airsonic/data:rw"
+      - "{{ airsonic_config }}/playlists:/airsonic/playlists:rw"
+      - "{{ airsonic_config }}/podcasts:/airsonic/podcasts:rw"
+      - "{{ plex_library }}/Music:/airsonic/music:ro"
+    ports:
+      - "4040:4040"
+    user: "{{ airsonic_uid }}"
+    restart_policy: unless-stopped
+    memory: 1g
+    cpu_period: 100000
+    cpu_quota: 300000
