@@ -39,6 +39,11 @@ deezloader_downloads: /media/Deezloader
 organizr: /docker/Organizr
 
 #Mariadb
-mariadb: /var/lib/mysql
+mariadb: sisko.nrichman.dev
+mariadb_port: 3306
+
+#firefly
+firefly: sisko.nrichman.dev
+firefly_port: 3020
 
 

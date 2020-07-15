@@ -11,7 +11,7 @@
     hostname: mariadb
     pull: true
     volumes:
-      - "{{ mariadb }}:/var/lib/mysql"
+      - "{{ mariadb_home }}:/var/lib/mysql"
       - "{{ mariadb_cnf }}:/etc/my.cnf.d"
     ports:
       - "3306:3306"
