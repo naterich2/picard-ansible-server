@@ -1,0 +1,44 @@
+
+- name: Include credentials
+  include_vars:
+    file: ../vars/credentials.yml
+
+- name: Create user
+  user: firefly
+    system: yes
+    create_home: no
+  register: user_info
+  when: init
+
+- name: Create directories
+  file:
+    state: directory
+    name: "{{ items }}"
+    owner: "{{ user_info.uid }}"
+  loop:
+    - "{{ firefly_home }}"
+    - "{{ firefly_home }}/export"
+    - "{{ firefly_home }}/upload"
+ when: init
+
+- name: firefly docker
+  docker_container:
+    name: firefly
+    image: jc5x/firefly-iii:latest
+    pull: true
+    user: "{{ user_info.uid }}"
+    volumes: 
+      - "{{ firefly_home }}/export:/var/www/firefly-iii/storage/export"
+      - "{{ firefly_home }}/upload:/var/www/firefly-iii/storage/upload"
+    ports:
+      - "{{ firefly_port }}:8080"
+    env:
+      DB_HOST: "{{ mariadb }}"
+      DB_PORT: "{{ mariadb_port }}"
+      DB_DATABASE: "{{ firefly_db }}"
+      DB_USERNAME: "{{ firefly_db_user }}"
+      DB_PASSWORD: "{{ firefly_db_password }}"
+      APP_KEY: "{{ firefly_key }}"
+
+
+
