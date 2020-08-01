@@ -4,22 +4,29 @@
     file: ../vars/credentials.yml
 
 - name: Create user
-  user: firefly
+  user: 
+    name: firefly
     system: yes
     create_home: no
+    groups:
+      - "{{ www_data }}"
+    append: yes
+
   register: user_info
   when: init
 
 - name: Create directories
   file:
     state: directory
-    name: "{{ items }}"
+    name: "{{ item }}"
+    mode: "0755"
     owner: "{{ user_info.uid }}"
+    group: "{{ user_info.group }}"
   loop:
     - "{{ firefly_home }}"
     - "{{ firefly_home }}/export"
     - "{{ firefly_home }}/upload"
- when: init
+  when: init
 
 - name: firefly docker
   docker_container:
@@ -27,6 +34,8 @@
     image: jc5x/firefly-iii:latest
     pull: true
     user: "{{ user_info.uid }}"
+    groups: 
+      - "{{ www_data }}"
     volumes: 
       - "{{ firefly_home }}/export:/var/www/firefly-iii/storage/export"
       - "{{ firefly_home }}/upload:/var/www/firefly-iii/storage/upload"
@@ -38,6 +47,7 @@
       DB_DATABASE: "{{ firefly_db }}"
       DB_USERNAME: "{{ firefly_db_user }}"
       DB_PASSWORD: "{{ firefly_db_password }}"
+      DB_CONNECTION: "mysql"
       APP_KEY: "{{ firefly_key }}"
 
 
