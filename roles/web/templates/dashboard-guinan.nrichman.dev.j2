@@ -20,31 +20,28 @@
 #
 
 upstream jackett_srv {
-  server {{ jackett }}:{{jackett_port}};
+    	server 10.0.9.2:9117;
 }
 upstream lidarr_srv {
-	server {{ lidarr }}:{{ lidarr_port }};
+	server 10.0.9.3:8686;
 }
 upstream radarr_srv {
-	server {{ radarr }}:{{ radarr_port }};
+ 	server 10.0.9.4:7878;
 }
 upstream sonarr_srv {
-	server {{ sonarr }}:{{ sonarr_port }};
+    	server 10.0.9.5:8989;
 }
 upstream transmission_srv {
-	server {{ transmission }}:{{ transmission_port }};
+    	server 10.0.9.6:9091;
 }
 upstream deezloader_srv {
-	server {{ deezloader }}:{{ deezloader_port }};
+    	server 10.0.9.7:1730;
 }
 upstream soulseek_srv {
-	server {{ soulseek }}:{{ soulseek_port }};
+    	server 10.0.9.8:6080;
 }
 upstream homer_srv {
-      server {{ homer }}:{{ homer_port }};
-}
-upstream firefly_srv{
-  server {{ firefly }}:{{ firefly_port }};
+      server {{ homer_addr }}:{{ homer_port }};
 }
 server {
 	listen 80;
@@ -66,15 +63,40 @@ server {
 	listen [::]:443 ssl http2;
 
 	server_name dashboard.nrichman.dev;
+  proxy_intercept_errors off;
+  server_tokens          off;
 	
-    	ssl_certificate {{ dashboard_ssl }};
-    	ssl_certificate_key {{ dashboard_ssl_key }};
+  ssl_certificate {{ dashboard_ssl }};
+  ssl_certificate_key {{ dashboard_ssl_key }};
 	#  For now, only allow lan and clients subnet
 	allow 10.0.1.0/26;
 	allow 10.0.9.0/28;
 	allow 10.0.101.0/24;
 	# drop rest of the world 
 	deny    all;
+
+  access_by_lua '
+          local opts = {
+            redirect_uri_path = "/redirect_uri",
+            accept_none_alg = true,
+            discovery = "https://keycloak_endpoint/auth/realms/internal_applications/.well-known/openid-configuration",
+            client_id = "elk",
+            client_secret = "!!! Set this to the secret from the JSON !!! ",
+            ssl_verify = "no",
+            redirect_uri_scheme = "https",
+            logout_path = "/logout",
+            redirect_after_logout_uri = "https://keycloak_endpoint/auth/realms/internal_applications/protocol/openid-connect/logout",
+            redirect_after_logout_with_id_token_hint = false,
+            session_contents = {id_token=true}
+          }
+          local res, err = require("resty.openidc").authenticate(opts)
+
+          if err then
+            ngx.status = 403
+            ngx.say(err)
+            ngx.exit(ngx.HTTP_FORBIDDEN)
+          end
+       ';
 
 	location / {
 		proxy_set_header    Host              $host;
