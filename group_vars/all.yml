@@ -27,13 +27,6 @@ vpn_provider: TORGUARD
 download_hub: /media/download_hub
 transmission_local_network: "10.0.1.0/26,10.0.10.0/26,10.0.101.0/24,10.0.102.0/26,192.168.1.1/24"
 
-#Soulseek
-soulseek: /docker/Soulseek
-soulseek_downloads: /media/Soulseek
-
-#Deezloader
-deezloader_config: /docker/deezloader
-deezloader_downloads: /media/Deezloader
 ############################ Download Hub #############################
 # Jackett
 jackett: "10.0.9.2"
@@ -64,12 +57,18 @@ deezloader_port: "1730"
 soulseek: "10.0.9.8"
 soulseek_port: "6080"
 
-#Mariadb
-mariadb: sisko.nrichman.dev
-mariadb_port: "3306"
+############################ Services #############################
 
-#firefly
+# Mariadb
+mariadb: sisko.nrichman.dev
+mariadb_port: 3306
+
+# Firefly
 firefly: sisko.nrichman.dev
-firefly_port: "3020"
+firefly_port: 3020
+
+# Homer
+homer: sisko.nrichman.dev
+homer_port: 9001
 
 
