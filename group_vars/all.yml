@@ -9,7 +9,7 @@
 docker: /docker
 timezone: America/Chicago
 influxdb_name: data.nrichman.lan
-dns: 10.0.1.6
+dns: "10.0.1.6"
 
 #Plex config
 plex_config: /docker/plex
@@ -34,16 +34,42 @@ soulseek_downloads: /media/Soulseek
 #Deezloader
 deezloader_config: /docker/deezloader
 deezloader_downloads: /media/Deezloader
+############################ Download Hub #############################
+# Jackett
+jackett: "10.0.9.2"
+jackett_port: "9117"
 
-#Organizr
-organizr: /docker/Organizr
+# Lidarr
+lidarr: "10.0.9.3"
+lidarr_port: "3007"
+
+# Radarr
+radarr: "10.0.9.4"
+radarr_port: "3009"
+
+# Sonarr
+sonarr: "10.0.9.5"
+sonarr_port: "3011"
+
+# Transmission
+transmission: "10.0.9.6"
+transmission_web_port: 9091
+transmission_torrent_port: 51562
+
+# Deezloader
+deezloader: "10.0.9.7"
+deezloader_port: "1730"
+
+# Soulseek
+soulseek: "10.0.9.8"
+soulseek_port: "6080"
 
 #Mariadb
 mariadb: sisko.nrichman.dev
-mariadb_port: 3306
+mariadb_port: "3306"
 
 #firefly
 firefly: sisko.nrichman.dev
-firefly_port: 3020
+firefly_port: "3020"
 
 

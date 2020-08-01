@@ -9,15 +9,15 @@
 - name: docker torrent network
   docker_network:
     name: torrent
-    driver: macvlan
+    driver: ipvlan
     driver_options:
       com.docker.network.bridge.name: "docker2"
-      parent: vlan99@enp2s0
+      parent: "enp2s0.9"
+      ipvlan_mode: l2
     ipam_config:
-      - subnet: 172.16.0.0/27
-        gateway: 172.16.0.1
+      - subnet: 10.0.9.0/27
+        gateway: 10.0.9.1
     state: present
-    force: yes
   when: init
 
 #######################################################
@@ -29,7 +29,7 @@
     image: linuxserver/lidarr:latest
     pull: true
     volumes:
-      - "{{ lidarr }}:/config"
+      - "{{ lidarr_config }}:/config"
       - "{{ transmission_downloads }}/complete:/storage/downloads/complete"
       - "{{ library }}/Music:/music"
     etc_hosts: "{{ extra_hosts }}"
@@ -38,10 +38,10 @@
       PGID: "995"
       TZ: "America/Chicago"
     ports:
-      - "3007:8686"
+      - "{{ lidarr_port }}:8686"
     networks:
       - name: torrent
-        ipv4_address: "172.16.0.3"
+        ipv4_address: "{{ lidarr }}"
         aliases:
           - "lidarr"
     purge_networks: yes
@@ -56,7 +56,7 @@
 - name: Template radarr autoProcess
   template:
     src: ../templates/autoProcess.ini.j2
-    dest: "{{ radarr }}/sickbeard/autoProcess.ini"
+    dest: "{{ radarr_config }}/sickbeard/autoProcess.ini"
     owner: radarr
     group: library
   vars:
@@ -71,10 +71,10 @@
     state: started
     restart_policy: unless-stopped
     ports:
-      - "3009:7878"
+      - "{{ radarr_port }}:7878"
     networks:
       - name: torrent
-        ipv4_address: "172.16.0.4"
+        ipv4_address: "{{ radarr }}"
         aliases:
           - "radarr"
     purge_networks: yes
@@ -87,8 +87,8 @@
     volumes:
       - "{{ library }}/Movies:/movies"
       - "{{ transmission_downloads }}/complete:/downloads"
-      - "{{ radarr }}:/config:rw"
-      - "{{ radarr }}/sickbeard:/usr/local/sma/config"
+      - "{{ radarr_config }}:/config:rw"
+      - "{{ radarr_config }}/sickbeard:/usr/local/sma/config"
     memory: 1g 
     cpu_period: 100000
     cpu_quota: 30000
@@ -98,7 +98,7 @@
 - name: Template sonarr autoProcess
   template:
     src: ../templates/autoProcess.ini.j2
-    dest: "{{ sonarr }}/sickbeard/autoProcess.ini"
+    dest: "{{ sonarr_config }}/sickbeard/autoProcess.ini"
     owner: sonarr
     group: library
   vars:
@@ -113,10 +113,10 @@
     state: started
     restart_policy: unless-stopped
     ports:
-      - "3011:8989"
+      - "{{ sonarr_port }}:8989"
     networks:
       - name: torrent
-        ipv4_address: "172.16.0.5"
+        ipv4_address: "{{ sonarr }}"
         aliases:
           - "sonarr"
     purge_networks: yes
@@ -129,8 +129,8 @@
     volumes:
       - "{{ library }}/TV\ Shows:/tv"
       - "{{ transmission_downloads }}/complete:/downloads"
-      - "{{ sonarr }}:/config:rw"
-      - "{{ sonarr }}/sickbeard:/usr/local/sma/config"
+      - "{{ sonarr_config }}:/config:rw"
+      - "{{ sonarr_config }}/sickbeard:/usr/local/sma/config"
     memory: 1g 
     cpu_period: 100000
     cpu_quota: 30000
@@ -145,10 +145,10 @@
     state: started
     restart_policy: unless-stopped
     ports:
-      - "9117:9117"
+      - "{{ jackett_port }}:9117"
     networks:
       - name: torrent
-        ipv4_address: "172.16.0.2"
+        ipv4_address: "{{ jackett }}"
         aliases:
           - "jackett"
     purge_networks: yes
@@ -159,8 +159,9 @@
       PUID: "1000"
       PGID: "996"
     volumes:
-      - "{{ jackett }}:/config"
+      - "{{ jackett_config }}:/config"
       - "{{ jackett_torrent_blackhole }}:/downloads"
+
 #######################################################
 ################### Transmission ######################
 #######################################################
@@ -172,15 +173,17 @@
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
       - "/etc/timezone:/etc/timezone:ro"
-      - "{{ transmission }}:/config:rw"
+      - "{{ transmission_config }}:/config:rw"
       - "{{ transmission_downloads }}:/storage/downloads:rw"
       - "{{ transmission_watch }}:/storage/watch"
     ports:
-      - "9091:9091"
+      - "{{ transmission_web_port }}:9091"
+      - "{{ transmission_torrent_port }}:51413" 
+      - "{{ transmission_torrent_port }}:51413/udp"
     etc_hosts: "{{ extra_hosts }}"
     networks:
       - name: torrent
-        ipv4_address: "172.16.0.6"
+        ipv4_address: "{{ transmission }}"
         aliases:
           - "transmission"
     purge_networks: yes
@@ -194,6 +197,7 @@
       #      TRANSMISSION_RPC_PASSWORD: "{{ transmission_password }}"
       PUID: "119"
       PGID: "995"
+
 #######################################################
 #################### Deezloader #######################
 #######################################################
@@ -204,13 +208,13 @@
     pull: true
     volumes:
       - "{{ deezloader_downloads }}:/downloads:rw"
-      - "{{ deezloader }}:/config:rw"
+      - "{{ deezloader_config }}:/config:rw"
     etc_hosts: "{{ extra_hosts }}"
     ports:
-      - "1730:1730"
+      - "{{ deezloader_port }}:1730"
     networks:
       - name: torrent
-        ipv4_address: "172.16.0.7"
+        ipv4_address: "{{ deezloader }}"
         aliases:
           - "deezloader"
     purge_networks: yes
@@ -218,6 +222,7 @@
     env:
       PUID: "120"
       PGID: "995"
+
 #######################################################
 ##################### Soulseek ########################
 #######################################################
@@ -227,15 +232,15 @@
     image: realies/soulseek
     pull: true
     volumes:
-      - "{{ soulseek }}/appdata:/data/.SoulseekQt:rw"
+      - "{{ soulseek_config }}/appdata:/data/.SoulseekQt:rw"
       - "{{ soulseek_downloads }}:/data/Soulseek Downloads:rw"
-      - "{{ soulseek }}/logs:/data/Soulseek Chat Logs:rw"
+      - "{{ soulseek_config }}/logs:/data/Soulseek Chat Logs:rw"
     etc_hosts: "{{ extra_hosts }}"
     ports:
-      - "6080:6080"
+      - "{{ souleek_port }}:6080"
     networks:
       - name: torrent
-        ipv4_address: "172.16.0.8"
+        ipv4_address: "{{ soulseek }}"
         aliases:
           - "soulseek"
     purge_networks: yes

@@ -4,24 +4,24 @@ library: /media/Library
 downloads: /media/download_hub/Downloads
 
 #Config dirs
-jackett: "{{ config }}"/jackett
-radarr: "{{ config }}"/radarr
-sonarr: "{{ config }}"/sonarr
-lidarr: "{{ config }}"/lidarr
-transmission: "{{ config }}"/transmission
-deezloader: "{{ config }}"/deezloader
-soulseek: "{{ config }}"/soulseek
+jackett_config: "{{ config }}/jackett"
+radarr_config: "{{ config }}/radarr"
+sonarr_config: "{{ config }}/sonarr"
+lidarr_config: "{{ config }}/lidarr"
+transmission_config: "{{ config }}/transmission"
+deezloader_config: "{{ config }}/deezloader"
+soulseek_config: "{{ config }}/soulseek"
 
 #Outputs for radarr, sonarr, lidarr
 radarr_output: /movies
 sonarr_output: /tv
 
 # File mounts
-jackett_torrent_blackhole: "{{ downloads }}"/jackett
-transmission_downloads: "{{ downloads }}"/transmission
-transmission_watch:  "{{ downloads }}"/transmission_watch
-soulseek_downloads: "{{ downloads }}"/soulseek/Downloads
-deezloader_downloads: "{{ downloads }}"/deezloader
+jackett_torrent_blackhole: "{{ downloads }}/jackett"
+transmission_downloads: "{{ downloads }}/transmission"
+transmission_watch:  "{{ downloads }}/transmission_watch"
+soulseek_downloads: "{{ downloads }}/soulseek/Downloads"
+deezloader_downloads: "{{ downloads }}/deezloader"
 
 extra_hosts: 
   transmission.nrichman.dev: 10.0.9.2

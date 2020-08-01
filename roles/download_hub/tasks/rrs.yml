@@ -32,19 +32,19 @@
     path: "{{ item.path }}"
     state: directory
     owner: "{{ item.owner }}"
-    group: "{{ itme.group }}"
+    group: "{{ item.group }}"
     mode: 0775
   loop:
-    - { path: "{{ lidarr }}",           owner: "lidarr",        group: "downloads" }
-    - { path: "{{ radarr }}",           owner: "radarr",        group: "library" }
-    - { path: "{{ sonarr }}",           owner: "sonarr",        group: "library" }
-    - { path: "{{ radarr }}/sickbeard", owner: "radarr",        group: "library" }
-    - { path: "{{ sonarr }}/sickbeard", owner: "sonarr",        group: "library" }
-    - { path: "{{ jackett }}",          owner: "jackett",       group: "downloads" }
-    - { path: "{{ jackett }}",          owner: "jackett",       group: "downloads" }
-    - { path: "{{ transmission }}",     owner: "transmission",  group: "downloads"  }
-    - { path: "{{ deezloader }}",       owner: "deezloader",    group: "downloads"  }
-    - { path: "{{ soulseek }}",         owner: "soulseek",      group: "downloads"  }
-    - { path: "{{ soulseek }}/logs",    owner: "soulseek",      group: "downloads" }
-    - { path: "{{ soulseek }}/appdata", owner: "soulseek",      group: "downloads" }
+    - { path: "{{ lidarr_config }}",           owner: "lidarr",        group: "downloads" }
+    - { path: "{{ radarr_config  }}",           owner: "radarr",        group: "library" }
+    - { path: "{{ sonarr_config  }}",           owner: "sonarr",        group: "library" }
+    - { path: "{{ radarr_config  }}/sickbeard", owner: "radarr",        group: "library" }
+    - { path: "{{ sonarr_config  }}/sickbeard", owner: "sonarr",        group: "library" }
+    - { path: "{{ jackett_config  }}",          owner: "jackett",       group: "downloads" }
+    - { path: "{{ jackett_config  }}",          owner: "jackett",       group: "downloads" }
+    - { path: "{{ transmission_config  }}",     owner: "transmission",  group: "downloads"  }
+    - { path: "{{ deezloader_config  }}",       owner: "deezloader",    group: "downloads"  }
+    - { path: "{{ soulseek_config  }}",         owner: "soulseek",      group: "downloads"  }
+    - { path: "{{ soulseek_config  }}/logs",    owner: "soulseek",      group: "downloads" }
+    - { path: "{{ soulseek_config  }}/appdata", owner: "soulseek",      group: "downloads" }
   become: yes
