@@ -26,13 +26,13 @@ upstream lidarr_srv {
 	server {{ lidarr }}:{{ lidarr_port }};
 }
 upstream radarr_srv {
-	server {{ radarr }}:{{ radarr_port }};
+	server {{ radarr }}:7878;
 }
 upstream sonarr_srv {
 	server {{ sonarr }}:{{ sonarr_port }};
 }
 upstream transmission_srv {
-	server {{ transmission }}:{{ transmission_port }};
+	server {{ transmission }}:{{ transmission_web_port }};
 }
 upstream deezloader_srv {
 	server {{ deezloader }}:{{ deezloader_port }};
@@ -49,7 +49,7 @@ upstream firefly_srv{
 server {
 	listen 80;
 	listen [::]:80;
-	server_name dashboard.nrichman.dev transmission.nrichman.dev;
+	server_name dashboard.nrichman.dev transmission.nrichman.dev firefly.nrichman.dev;
 
 	#  For now, only allow lan and clients subnet
 	allow 10.0.1.0/26;
@@ -113,16 +113,6 @@ server {
 		proxy_read_timeout  90;
 		proxy_redirect      off;
 	} 
-	location /transmission/ {
-		proxy_set_header    Host              $host;
-		proxy_set_header    X-Real-IP         $remote_addr;
-		proxy_set_header    X-Forwarded-For   $proxy_add_x_forwarded_for;
-		proxy_set_header    X-Forwarded-Proto $scheme;
-    proxy_pass_header   X-Transmission-Session-Id;
-		proxy_pass          http://transmission_srv;
-		proxy_read_timeout  90;
-		proxy_redirect      off;
-	} 
 	location /jackett/ {
 		proxy_set_header    Host              $host;
 		proxy_set_header    X-Real-IP         $remote_addr;
@@ -150,4 +140,55 @@ server {
 		proxy_read_timeout  90;
 		proxy_redirect      off;
 	} 
+}
+server {
+	access_log /var/log/nginx/firefly.nrichman.dev.log main;
+	listen 443 ssl http2;
+	listen [::]:443 ssl http2;
+
+	server_name firefly.nrichman.dev;
+	
+    	ssl_certificate {{ dashboard_ssl }};
+    	ssl_certificate_key {{ dashboard_ssl_key }};
+	#  For now, only allow lan and clients subnet
+	allow 10.0.1.0/26;
+	allow 10.0.9.0/28;
+	allow 10.0.101.0/24;
+	# drop rest of the world 
+	deny    all;
+	location / {
+		proxy_set_header    Host              $host;
+		proxy_set_header    X-Real-IP         $remote_addr;
+		proxy_set_header    X-Forwarded-For   $proxy_add_x_forwarded_for;
+		proxy_set_header    X-Forwarded-Proto $scheme;
+		proxy_pass          http://firefly_srv;
+		proxy_read_timeout  90;
+		proxy_redirect      off;
+	} 
+}
+server {
+	access_log /var/log/nginx/firefly.nrichman.dev.log main;
+	listen 443 ssl http2;
+	listen [::]:443 ssl http2;
+
+	server_name transmission.nrichman.dev;
+	
+    	ssl_certificate {{ dashboard_ssl }};
+    	ssl_certificate_key {{ dashboard_ssl_key }};
+	#  For now, only allow lan and clients subnet
+	allow 10.0.1.0/26;
+	allow 10.0.9.0/28;
+	allow 10.0.101.0/24;
+	# drop rest of the world 
+	deny    all;
+	location / {
+		proxy_set_header    Host              $host;
+		proxy_set_header    X-Real-IP         $remote_addr;
+		proxy_set_header    X-Forwarded-For   $proxy_add_x_forwarded_for;
+		proxy_set_header    X-Forwarded-Proto $scheme;
+		proxy_pass          http://transmission;
+		proxy_read_timeout  90;
+		proxy_redirect      off;
+	} 
+  
 }
