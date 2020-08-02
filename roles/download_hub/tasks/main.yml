@@ -37,8 +37,6 @@
       PUID: "117"
       PGID: "995"
       TZ: "America/Chicago"
-    ports:
-      - "{{ lidarr_port }}:8686"
     networks:
       - name: torrent
         ipv4_address: "{{ lidarr }}"
@@ -70,8 +68,6 @@
     pull: true
     state: started
     restart_policy: unless-stopped
-    ports:
-      - "{{ radarr_port }}:7878"
     networks:
       - name: torrent
         ipv4_address: "{{ radarr }}"
@@ -112,8 +108,6 @@
     pull: true
     state: started
     restart_policy: unless-stopped
-    ports:
-      - "{{ sonarr_port }}:8989"
     networks:
       - name: torrent
         ipv4_address: "{{ sonarr }}"
