@@ -45,12 +45,13 @@
 ansible_python_interpreter=/usr/bin/python3 
 
 [all]
-sisko.nrichman.dev    ansible_connection=local
-janeway.nrichman.dev  ansible_ssh_user=pi
-data.nrichman.dev     ansible_ssh_user=pi
-picard.nrichman.dev 
-odo.nrichman.dev
-quark.nrichman.dev
+sisko.nrichman.dev    	ansible_connection=local	ansible_host=10.0.1.5
+janeway.nrichman.dev  	ansible_ssh_user=pi 		ansible_host=10.0.1.6
+data.nrichman.dev     	ansible_ssh_user=pi 		ansible_host=10.0.1.7
+#picard.nrichman.dev 	ansible_host=10.0.1.9
+odo.nrichman.dev	ansible_host=10.0.1.11
+quark.nrichman.dev 	ansible_host=10.0.9.2
+tuvok.nrichman.dev  ansible_host=10.0.1.12
 
 [data_master]
 data.nrichman.dev
@@ -58,9 +59,10 @@ data.nrichman.dev
 [data_slave]
 sisko.nrichman.dev
 janeway.nrichman.dev
-picard.nrichman.dev 
+#picard.nrichman.dev 
 odo.nrichman.dev
 quark.nrichman.dev
+tuvok.nrichman.dev
 
 [nginx_web]
 sisko.nrichman.dev
