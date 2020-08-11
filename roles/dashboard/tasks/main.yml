@@ -22,8 +22,12 @@
     ports: 
       - "9001:8080"
     volumes:
-      - "{{ homer }}:/www:rw"
+      - "{{ homer }}/assets:/www/assets:rw"
+      - "{{ homer }}/config.yml:/www/config.yml:rw"
     memory: 1g
+    env:
+      UID: "{{ homer_uid }}"
+      GID: "{{ homer_uid }}"
     cpu_period: 100000
     cpu_quota: 10000
 
