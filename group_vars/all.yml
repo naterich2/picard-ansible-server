@@ -34,15 +34,15 @@ jackett_port: "9117"
 
 # Lidarr
 lidarr: "10.0.9.3"
-lidarr_port: "3007"
+lidarr_port: "8686"
 
 # Radarr
 radarr: "10.0.9.4"
-radarr_port: "3009"
+radarr_port: "7878"
 
-# Sonarr
+# Sonar
 sonarr: "10.0.9.5"
-sonarr_port: "3011"
+sonarr_port: "8989"
 
 # Transmission
 transmission: "10.0.9.6"
@@ -60,15 +60,15 @@ soulseek_port: "6080"
 ############################ Services #############################
 
 # Mariadb
-mariadb: sisko.nrichman.dev
-mariadb_port: 3306
+mariadb: 10.0.1.5
+mariadb_port: "3306"
 
 # Firefly
-firefly: sisko.nrichman.dev
+firefly: 10.0.1.5
 firefly_port: 3020
 
 # Homer
-homer: sisko.nrichman.dev
+homer: 10.0.1.5
 homer_port: 9001
 
 
