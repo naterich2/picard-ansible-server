@@ -1,0 +1,9 @@
+---
+- hosts: odo.nrichman.dev
+  roles:
+    - role: keycloak
+      vars: 
+        init: false
+        start: true
+      become: yes
+

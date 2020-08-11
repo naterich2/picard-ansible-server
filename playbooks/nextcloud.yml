@@ -2,6 +2,6 @@
 ---
 
 # Start nextcloud
-- hosts: picard
+- hosts: sisko.nrichman.dev
   roles:
     - nextcloud

@@ -2,6 +2,6 @@
 ---
 
 # Start gitea
-- hosts: picard
+- hosts: sisko.nrichman.dev
   roles:
     - gitea

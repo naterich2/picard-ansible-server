@@ -1,0 +1,9 @@
+---
+- hosts: sisko.nrichman.dev
+  roles:
+    - role: download_hub
+      become: yes
+      vars:
+        init: no
+        start: no
+

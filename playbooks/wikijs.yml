@@ -1,6 +1,6 @@
 ---
 
 # Start wikijs
-- hosts: picard
+- hosts: sisko.nrichman.dev
   roles:
     - wikijs

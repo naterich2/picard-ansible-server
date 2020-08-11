@@ -1,9 +1,10 @@
 
 ---
 
+# Start firefly
 - hosts: sisko.nrichman.dev
   roles:
-    - streaming
+    - firefly
+  vars:
+    init: yes
   become: yes
-  vars: 
-    - init: yes

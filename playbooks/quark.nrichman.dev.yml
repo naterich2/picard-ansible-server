@@ -1,6 +1,0 @@
----
-
-- hosts: quark.nrichman.dev
-  roles:
-    - {role: download_hub, become: yes, tags: [run] }
-

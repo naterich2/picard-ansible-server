@@ -1,0 +1,2 @@
+- name: main_web tasks
+  import_tasks: main_web.yml
