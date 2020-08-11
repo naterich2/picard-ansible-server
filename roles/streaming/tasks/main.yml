@@ -44,6 +44,28 @@
     ports:
       - "4040:4040"
     user: "{{ airsonic_uid }}"
+    groups: ['996']
+    restart_policy: unless-stopped
+    memory: 1g
+    cpu_period: 100000
+    cpu_quota: 300000
+
+
+#######################################################
+#################### Jellyfin #########################
+#######################################################
+- name: Jellyfin Docker Container
+  docker_container:
+    name: jellyfin
+    image: jellyfin/jellyfin
+    pull: true
+    volumes:
+      - "{{ jellyfin_config }}/data:/config:rw"
+      - "{{ plex_library }}/Music:/data/music:ro"
+    ports:
+      - "8096:8096"
+    user: "{{ jellyfin_uid }}"
+    groups: ['996']
     restart_policy: unless-stopped
     memory: 1g
     cpu_period: 100000

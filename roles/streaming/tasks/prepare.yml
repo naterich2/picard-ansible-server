@@ -6,8 +6,8 @@
   with_items:
     - "{{ plex_config }}"
 
-- name:
-  user: Create airsonic user
+- name: Create airsonic user
+  user: 
     name: "{{ airsonic_user }}"
     uid: "{{ airsonic_uid }}"
 
@@ -15,6 +15,9 @@
   file:
     path: "{{ item }}"
     state: directory
+    owner: "{{ airsonic_user }}"
+    group: "nrichman"
+    mode: "0775"
   loop:
     - "{{ airsonic_config }}"
     - "{{ airsonic_config }}/data"
@@ -26,7 +29,31 @@
     path: "{{ plex_library }}/Music"
     entity: "{{ airsonic_user }}"
     etype: user
-    permissions: r
+    permissions: r-x
     recursive: yes
     state: present
 
+- name: Create jellyfin user
+  user: 
+    name: "{{ jellyfin_user }}"
+    uid: "{{ jellyfin_uid }}"
+
+- name: Create jellyfin directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ jellyfin_user }}"
+    group: "nrichman"
+    mode: "0775"
+  loop:
+    - "{{ jellyfin_config }}"
+    - "{{ jellyfin_config }}/data"
+
+- name: Grant jellyfin user access to music database
+  acl:
+    path: "{{ plex_library }}/Music"
+    entity: "{{ jellyfin_user }}"
+    etype: user
+    permissions: r-x
+    recursive: yes
+    state: present
