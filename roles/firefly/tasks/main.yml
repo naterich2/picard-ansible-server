@@ -26,7 +26,13 @@
     - "{{ firefly_home }}"
     - "{{ firefly_home }}/export"
     - "{{ firefly_home }}/upload"
+    - "{{ firefly_home }}/config"
   when: init
+
+- name: template .env file
+  template:
+    src: "../templates/env.j2"
+    dest: "{{ firefly_home }}/config/.env"
 
 - name: firefly docker
   docker_container:
@@ -41,14 +47,7 @@
       - "{{ firefly_home }}/upload:/var/www/firefly-iii/storage/upload"
     ports:
       - "{{ firefly_port }}:8080"
-    env:
-      DB_HOST: "{{ mariadb }}"
-      DB_PORT: "{{ mariadb_port }}"
-      DB_DATABASE: "{{ firefly_db }}"
-      DB_USERNAME: "{{ firefly_db_user }}"
-      DB_PASSWORD: "{{ firefly_db_password }}"
-      DB_CONNECTION: "mysql"
-      APP_KEY: "{{ firefly_key }}"
+    env_file: '{{ firefly_home }}/config/.env'
 
 
 
