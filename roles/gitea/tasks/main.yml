@@ -14,6 +14,7 @@
     hostname: git.nrichman.dev
     volumes:
       - "{{ gitea }}:/data:rw"
+      - "/etc/ssl/certs:/etc/ssl/certs:ro"
     ports:
       - "28000:3000"
       - "28001:22"
